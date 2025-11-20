@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvel élève - Admin{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Créer un élève</h2>
+
+<form method="post" enctype="multipart/form-data" class="card card-body shadow-sm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-check-circle"></i> Enregistrer
+    </button>
+</form>
+{% endblock %}

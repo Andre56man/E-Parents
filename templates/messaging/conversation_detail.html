@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Conversation - {{ conversation.subject }}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-chat-dots"></i> {{ conversation.subject }}</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <p class="mb-1"><strong>Participants :</strong>
+            {% for user in conversation.participants.all %}
+                {{ user.get_full_name|default:user.username }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        {% if conversation.student %}
+        <p class="mb-0"><strong>Élève concerné :</strong> {{ conversation.student }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">Messages</div>
+    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+        {% for message in messages %}
+        <div class="mb-2">
+            <strong>{{ message.sender.get_full_name|default:message.sender.username }}</strong>
+            <small class="text-muted">- {{ message.created_at|date:'d/m/Y H:i' }}</small>
+            <p class="mb-0">{{ message.content }}</p>
+        </div>
+        <hr>
+        {% empty %}
+        <p class="text-muted">Aucun message pour le moment.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<form method="post" class="card card-body shadow-sm">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_content" class="form-label">Nouveau message</label>
+        <textarea name="content" id="id_content" class="form-control" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-send"></i> Envoyer
+    </button>
+</form>
+{% endblock %}

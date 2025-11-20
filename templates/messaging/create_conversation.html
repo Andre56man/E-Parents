@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvelle conversation{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-envelope-plus"></i> Nouvelle conversation</h2>
+
+<form method="post" action="{% url 'messaging:create_conversation' %}" class="card card-body shadow-sm">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="id_subject" class="form-label">Sujet</label>
+        <input type="text" name="subject" id="id_subject" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_recipient" class="form-label">Destinataire</label>
+        <select name="recipient" id="id_recipient" class="form-select" required>
+            <option value="" selected disabled>-- Sélectionner un destinataire --</option>
+            {% for user in recipients %}
+            <option value="{{ user.id }}">{{ user.get_full_name|default:user.username }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_student" class="form-label">Élève concerné (optionnel)</label>
+        {% if children %}
+            <select name="student" id="id_student" class="form-select">
+                <option value="">-- Sélectionner un élève (optionnel) --</option>
+                {% for child in children %}
+                <option value="{{ child.id }}">{{ child.get_full_name }}</option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <input type="text" name="student" id="id_student" class="form-control" placeholder="ID de l'élève (optionnel)">
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-check-circle"></i> Créer la conversation
+    </button>
+</form>
+{% endblock %}

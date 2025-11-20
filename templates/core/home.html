@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block title %}E-Parent - Plateforme de Suivi Scolaire{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-primary text-white py-5 mb-5 rounded">
+    <div class="container text-center">
+        <h1 class="display-4 mb-3">
+            <i class="bi bi-mortarboard-fill"></i> E-Parent
+        </h1>
+        <p class="lead">Plateforme numérique de suivi scolaire et académique</p>
+        <p class="mb-4">Suivez la scolarité de vos enfants en temps réel</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5">
+                <i class="bi bi-box-arrow-in-right"></i> Se connecter
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container">
+    <h2 class="text-center mb-5">Fonctionnalités principales</h2>
+    
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-journal-text display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Suivi des notes</h5>
+                    <p class="card-text">
+                        Consultez les notes et moyennes de vos enfants en temps réel, 
+                        matière par matière, avec un historique complet.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+                    <h5 class="card-title">Gestion des absences</h5>
+                    <p class="card-text">
+                        Recevez des notifications immédiates en cas d'absence ou de retard, 
+                        avec la possibilité de justifier les absences.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-check display-4 text-info mb-3"></i>
+                    <h5 class="card-title">Planning des devoirs</h5>
+                    <p class="card-text">
+                        Consultez le planning des devoirs et examens à venir, 
+                        avec les dates limites et les matières concernées.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-bell display-4 text-success mb-3"></i>
+                    <h5 class="card-title">Notifications</h5>
+                    <p class="card-text">
+                        Recevez des notifications automatiques pour chaque nouvelle note, 
+                        absence ou devoir publié.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-envelope display-4 text-danger mb-3"></i>
+                    <h5 class="card-title">Communication</h5>
+                    <p class="card-text">
+                        Échangez directement avec les enseignants via la messagerie intégrée 
+                        pour un suivi personnalisé.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-shield-lock display-4 text-dark mb-3"></i>
+                    <h5 class="card-title">Sécurité</h5>
+                    <p class="card-text">
+                        Vos données sont protégées avec un système d'authentification sécurisé 
+                        et conforme au RGPD.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- For Parents Section -->
+<div class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-4">Pour les Parents</h2>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        Accès rapide et sécurisé aux informations scolaires
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        Consultation des notes et moyennes en temps réel
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        Visualisation des absences et retards
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        Planning des devoirs et examens
+                    </li>
+                    <li class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        Communication directe avec les enseignants
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6 text-center">
+                <i class="bi bi-people display-1 text-primary"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- For Teachers Section -->
+<div class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 text-center order-md-2">
+            <i class="bi bi-person-badge display-1 text-primary"></i>
+        </div>
+        <div class="col-md-6 order-md-1">
+            <h2 class="mb-4">Pour les Enseignants</h2>
+            <ul class="list-unstyled">
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    Saisie et modification des notes facilement
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    Enregistrement des absences et retards
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    Publication des devoirs et annonces
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    Consultation des listes d'élèves par classe
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    Communication avec les parents
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="bg-primary text-white py-5 rounded mb-4">
+    <div class="container text-center">
+        <h3 class="mb-3">Prêt à commencer ?</h3>
+        <p class="lead mb-4">Connectez-vous pour accéder à votre espace personnel</p>
+        <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5 mb-3">
+            <i class="bi bi-box-arrow-in-right"></i> Se connecter maintenant
+        </a>
+        <p class="mt-3 small">
+            <i class="bi bi-info-circle"></i> 
+            Vous n'avez pas encore de compte ? Contactez votre administrateur.
+        </p>
+    </div>
+</div>
+
+<!-- Quick Access Section -->
+<div class="container mb-5">
+    <div class="card shadow border-0">
+        <div class="card-body text-center p-4">
+            <h4 class="mb-3">Accès rapide</h4>
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Page de connexion
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

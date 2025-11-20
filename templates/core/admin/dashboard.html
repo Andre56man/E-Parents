@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord - Administrateur{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-house-door"></i> Tableau de bord Administrateur</h2>
+
+<div class="row mb-4">
+    <div class="col-md-2 col-sm-4 col-6 mb-3">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body text-center">
+                <h3>{{ total_students }}</h3>
+                <p class="mb-0 small">Élèves</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6 mb-3">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body text-center">
+                <h3>{{ total_teachers }}</h3>
+                <p class="mb-0 small">Enseignants</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6 mb-3">
+        <div class="card bg-info text-white h-100">
+            <div class="card-body text-center">
+                <h3>{{ total_parents }}</h3>
+                <p class="mb-0 small">Parents</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6 mb-3">
+        <div class="card bg-warning text-dark h-100">
+            <div class="card-body text-center">
+                <h3>{{ total_classes }}</h3>
+                <p class="mb-0 small">Classes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6 mb-3">
+        <div class="card bg-secondary text-white h-100">
+            <div class="card-body text-center">
+                <h3>{{ total_subjects }}</h3>
+                <p class="mb-0 small">Matières</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4 col-6 mb-3">
+        <div class="card bg-dark text-white h-100">
+            <div class="card-body text-center">
+                <h3>{{ total_schools }}</h3>
+                <p class="mb-0 small">Établissements</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5><i class="bi bi-exclamation-triangle"></i> Taux d'absences (30 derniers jours)</h5>
+            </div>
+            <div class="card-body">
+                <h2 class="text-center">{{ absence_rate }}%</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-trophy"></i> Top 10 Classes (Moyennes)</h5>
+            </div>
+            <div class="card-body">
+                {% if classes_with_avg %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Classe</th>
+                                    <th>Moyenne</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for class_obj in classes_with_avg %}
+                                <tr>
+                                    <td>{{ class_obj.name }}</td>
+                                    <td><span class="badge bg-success">{{ class_obj.avg_grade|floatformat:2 }}/20</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune donnée disponible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Administration Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-gear"></i> Administration - Accès rapide</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-3"><i class="bi bi-people"></i> Gestion des utilisateurs</h6>
+                        <div class="d-grid gap-2">
+                            <a href="/admin/accounts/user/add/" class="btn btn-outline-primary" target="_blank">
+                                <i class="bi bi-person-plus"></i> Ajouter un utilisateur
+                            </a>
+                            <a href="/admin/accounts/user/" class="btn btn-outline-primary" target="_blank">
+                                <i class="bi bi-list-ul"></i> Voir tous les utilisateurs
+                            </a>
+                            <a href="/admin/accounts/loginlog/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                                <i class="bi bi-clock-history"></i> Journaux de connexion
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6 class="text-success mb-3"><i class="bi bi-mortarboard"></i> Gestion des élèves</h6>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'core:admin_student_create' %}" class="btn btn-outline-success">
+                                <i class="bi bi-person-plus"></i> Ajouter un élève
+                            </a>
+                            <a href="{% url 'core:admin_students_list' %}" class="btn btn-outline-success">
+                                <i class="bi bi-list-ul"></i> Voir tous les élèves
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6><i class="bi bi-building"></i> Gestion des établissements et classes</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'core:admin_school_create' %}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-plus-circle"></i> Ajouter un établissement
+                    </a>
+                    <a href="{% url 'core:admin_schools_list' %}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-list-ul"></i> Voir les établissements
+                    </a>
+                    <hr>
+                    <a href="{% url 'core:admin_class_create' %}" class="btn btn-outline-info">
+                        <i class="bi bi-plus-circle"></i> Ajouter une classe
+                    </a>
+                    <a href="{% url 'core:admin_classes_list' %}" class="btn btn-outline-info">
+                        <i class="bi bi-list-ul"></i> Voir toutes les classes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h6><i class="bi bi-book"></i> Gestion des matières</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'core:admin_subject_create' %}" class="btn btn-outline-warning">
+                        <i class="bi bi-plus-circle"></i> Ajouter une matière
+                    </a>
+                    <a href="{% url 'core:admin_subjects_list' %}" class="btn btn-outline-warning">
+                        <i class="bi bi-list-ul"></i> Voir toutes les matières
+                    </a>
+                    <hr>
+                    <a href="/admin/core/classsubject/add/" class="btn btn-outline-warning btn-sm" target="_blank">
+                        <i class="bi bi-link-45deg"></i> Associer matière à classe
+                    </a>
+                    <a href="/admin/core/classsubject/" class="btn btn-outline-warning btn-sm" target="_blank">
+                        <i class="bi bi-list-ul"></i> Voir les associations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h6><i class="bi bi-journal-text"></i> Gestion des notes et absences</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/admin/core/grade/add/" class="btn btn-outline-danger btn-sm" target="_blank">
+                        <i class="bi bi-plus-circle"></i> Ajouter une note
+                    </a>
+                    <a href="/admin/core/grade/" class="btn btn-outline-danger btn-sm" target="_blank">
+                        <i class="bi bi-list-ul"></i> Voir toutes les notes
+                    </a>
+                    <hr>
+                    <a href="/admin/core/attendance/add/" class="btn btn-outline-danger btn-sm" target="_blank">
+                        <i class="bi bi-plus-circle"></i> Enregistrer une absence
+                    </a>
+                    <a href="/admin/core/attendance/" class="btn btn-outline-danger btn-sm" target="_blank">
+                        <i class="bi bi-list-ul"></i> Voir les absences
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-secondary text-white">
+                <h6><i class="bi bi-calendar-check"></i> Gestion des devoirs et notifications</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/admin/core/assignment/add/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                        <i class="bi bi-plus-circle"></i> Publier un devoir
+                    </a>
+                    <a href="/admin/core/assignment/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                        <i class="bi bi-list-ul"></i> Voir tous les devoirs
+                    </a>
+                    <hr>
+                    <a href="/admin/notifications/notification/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                        <i class="bi bi-bell"></i> Gérer les notifications
+                    </a>
+                    <a href="/admin/messaging/conversation/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                        <i class="bi bi-envelope"></i> Voir les conversations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accès complet à l'administration -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-shield-lock"></i> Interface d'administration complète</h5>
+            </div>
+            <div class="card-body text-center">
+                <p class="lead mb-4">Accédez à l'interface d'administration Django complète pour une gestion avancée</p>
+                <a href="/admin/" class="btn btn-primary btn-lg" target="_blank">
+                    <i class="bi bi-shield-lock"></i> Ouvrir l'interface d'administration
+                </a>
+                <p class="text-muted mt-3 small">
+                    <i class="bi bi-info-circle"></i> 
+                    L'interface s'ouvrira dans un nouvel onglet pour ne pas perdre votre place sur le dashboard
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

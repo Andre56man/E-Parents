@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-bell"></i> Mes Notifications</h2>
+    {% if notifications %}
+    <button id="mark-all-read" class="btn btn-primary">
+        <i class="bi bi-check-all"></i> Tout marquer comme lu
+    </button>
+    {% endif %}
+</div>
+
+{% if notifications %}
+    <div class="list-group">
+        {% for notification in notifications %}
+        <div class="list-group-item notification-item {% if not notification.is_read %}bg-light{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+                <div class="flex-grow-1">
+                    <h5 class="mb-1">
+                        {% if not notification.is_read %}
+                            <span class="badge bg-primary me-2">Nouveau</span>
+                        {% endif %}
+                        {{ notification.title }}
+                    </h5>
+                    <p class="mb-1">{{ notification.message }}</p>
+                    <small class="text-muted">
+                        <i class="bi bi-clock"></i> {{ notification.created_at|date:"d/m/Y H:i" }}
+                    </small>
+                </div>
+                {% if not notification.is_read %}
+                <button class="btn btn-sm btn-outline-primary mark-read-btn" data-id="{{ notification.id }}">
+                    Marquer comme lu
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Aucune notification pour le moment.
+    </div>
+{% endif %}
+
+<script>
+$(document).ready(function() {
+    $('.mark-read-btn').click(function() {
+        const notificationId = $(this).data('id');
+        const btn = $(this);
+        
+        $.post('{% url "notifications:mark_read" 0 %}'.replace('0', notificationId), {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }, function(data) {
+            if (data.success) {
+                btn.closest('.list-group-item').removeClass('bg-light');
+                btn.remove();
+                location.reload();
+            }
+        });
+    });
+    
+    $('#mark-all-read').click(function() {
+        $.post('{% url "notifications:mark_all_read" %}', {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }, function(data) {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+

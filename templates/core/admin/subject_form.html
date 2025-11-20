@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvelle matière - Admin{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Créer une matière</h2>
+
+<form method="post" class="card card-body shadow-sm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-check-circle"></i> Enregistrer
+    </button>
+</form>
+{% endblock %}

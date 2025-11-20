@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter une note{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-journal-plus"></i> Ajouter une note</h2>
+
+<form method="post" class="card card-body shadow-sm">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="id_class" class="form-label">Classe</label>
+        <select name="class" id="id_class" class="form-select" required>
+            <option value="" selected disabled>-- Sélectionner une classe --</option>
+            {% for class in classes %}
+            <option value="{{ class.id }}">{{ class.name }} ({{ class.academic_year }})</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_subject" class="form-label">Matière</label>
+        <select name="subject" id="id_subject" class="form-select" required>
+            <option value="" selected disabled>-- Sélectionner une matière --</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id }}">{{ subject.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_student" class="form-label">ID élève</label>
+        <input type="text" name="student" id="id_student" class="form-control" placeholder="ID de l'élève">
+    </div>
+
+    <div class="mb-3">
+        <label for="id_value" class="form-label">Note</label>
+        <input type="number" step="0.01" min="0" max="20" name="value" id="id_value" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_coefficient" class="form-label">Coefficient</label>
+        <input type="number" step="0.1" min="0.1" name="coefficient" id="id_coefficient" class="form-control" value="1.0">
+    </div>
+
+    <div class="mb-3">
+        <label for="id_grade_type" class="form-label">Type de note</label>
+        <select name="grade_type" id="id_grade_type" class="form-select">
+            <option value="DEVOIR">Devoir</option>
+            <option value="CONTROLE">Contrôle</option>
+            <option value="EXAMEN">Examen</option>
+            <option value="ORAL">Oral</option>
+            <option value="TP">Travaux Pratiques</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_date" class="form-label">Date</label>
+        <input type="date" name="date" id="id_date" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_comment" class="form-label">Commentaire (optionnel)</label>
+        <textarea name="comment" id="id_comment" class="form-control" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-check-circle"></i> Enregistrer la note
+    </button>
+</form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Profil - E-Parent{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4><i class="bi bi-person-circle"></i> Mon Profil</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nom d'utilisateur :</strong> {{ user.username }}</p>
+                        <p><strong>Email :</strong> {{ user.email }}</p>
+                        <p><strong>Prénom :</strong> {{ user.first_name|default:"Non renseigné" }}</p>
+                        <p><strong>Nom :</strong> {{ user.last_name|default:"Non renseigné" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Rôle :</strong> {{ user.get_role_display }}</p>
+                        <p><strong>Téléphone :</strong> {{ user.phone_number|default:"Non renseigné" }}</p>
+                        <p><strong>Date de création :</strong> {{ user.date_joined|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

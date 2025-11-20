@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord - Parent{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-house-door"></i> Tableau de bord</h2>
+
+{% if children %}
+    <div class="row mb-4">
+        {% for child in children %}
+        <div class="col-md-6 mb-3">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-person-badge"></i> {{ child.get_full_name }}
+                    </h5>
+                    <p class="card-text">
+                        <strong>Classe :</strong> {{ child.current_class|default:"Non assigné" }}<br>
+                        <strong>Numéro d'élève :</strong> {{ child.student_number }}
+                    </p>
+                    <a href="{% url 'core:student_detail' child.id %}" class="btn btn-primary">
+                        Voir le détail <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Aucun enfant associé à votre compte.
+    </div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-journal-text"></i> Notes récentes</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_grades %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Élève</th>
+                                    <th>Matière</th>
+                                    <th>Note</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in recent_grades %}
+                                <tr>
+                                    <td>{{ grade.student.get_full_name }}</td>
+                                    <td>{{ grade.subject }}</td>
+                                    <td><span class="badge bg-{% if grade.value >= 10 %}success{% else %}danger{% endif %}">{{ grade.value }}/20</span></td>
+                                    <td>{{ grade.date|date:"d/m/Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune note récente</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5><i class="bi bi-exclamation-triangle"></i> Absences/Retards récents</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_attendances %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Élève</th>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for attendance in recent_attendances %}
+                                <tr>
+                                    <td>{{ attendance.student.get_full_name }}</td>
+                                    <td>{{ attendance.date|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if attendance.status == 'ABSENT' %}danger{% elif attendance.status == 'RETARD' %}warning{% else %}info{% endif %}">
+                                            {{ attendance.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune absence récente</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5><i class="bi bi-calendar-check"></i> Devoirs à venir</h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_assignments %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Matière</th>
+                                    <th>Classe</th>
+                                    <th>Date limite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assignment in upcoming_assignments %}
+                                <tr>
+                                    <td>{{ assignment.title }}</td>
+                                    <td>{{ assignment.subject }}</td>
+                                    <td>{{ assignment.class_obj }}</td>
+                                    <td>{{ assignment.due_date|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucun devoir à venir</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Enregistrer une absence/retard{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-person-x"></i> Enregistrer une absence / un retard</h2>
+
+<form method="post" class="card card-body shadow-sm">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="id_class" class="form-label">Classe</label>
+        <select name="class" id="id_class" class="form-select" required>
+            <option value="" selected disabled>-- Sélectionner une classe --</option>
+            {% for class in classes %}
+            <option value="{{ class.id }}">{{ class.name }} ({{ class.academic_year }})</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_student" class="form-label">ID élève</label>
+        <input type="text" name="student" id="id_student" class="form-control" placeholder="ID de l'élève" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_status" class="form-label">Statut</label>
+        <select name="status" id="id_status" class="form-select" required>
+            <option value="ABSENT">Absent</option>
+            <option value="RETARD">Retard</option>
+            <option value="JUSTIFIE">Absence justifiée</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_date" class="form-label">Date</label>
+        <input type="date" name="date" id="id_date" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="id_reason" class="form-label">Raison (optionnel)</label>
+        <textarea name="reason" id="id_reason" class="form-control" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-check-circle"></i> Enregistrer
+    </button>
+</form>
+{% endblock %}

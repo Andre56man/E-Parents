@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Connexion - E-Parent{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h3><i class="bi bi-box-arrow-in-right"></i> Connexion</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                        <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                    </button>
+                </form>
+                <div class="alert alert-info mt-3" role="alert">
+                    <i class="bi bi-info-circle"></i> 
+                    <strong>Note :</strong> Seuls les administrateurs peuvent créer des comptes. 
+                    Contactez votre administrateur si vous n'avez pas encore de compte.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

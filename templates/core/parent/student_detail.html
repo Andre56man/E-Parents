@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ student.get_full_name }} - Détails{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-badge"></i> {{ student.get_full_name }}</h2>
+    <a href="{% url 'core:dashboard' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5>Informations</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Numéro d'élève :</strong> {{ student.student_number }}</p>
+                <p><strong>Classe :</strong> {{ student.current_class|default:"Non assigné" }}</p>
+                <p><strong>Date de naissance :</strong> {{ student.date_of_birth|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5>Moyennes par matière</h5>
+            </div>
+            <div class="card-body">
+                {% if subjects_avg %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Matière</th>
+                                    <th>Moyenne</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subject, avg in subjects_avg.items %}
+                                <tr>
+                                    <td>{{ subject.name }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if avg >= 10 %}success{% else %}danger{% endif %}">
+                                            {{ avg }}/20
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune note disponible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5>Notes détaillées</h5>
+            </div>
+            <div class="card-body">
+                {% if grades %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Matière</th>
+                                    <th>Type</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in grades %}
+                                <tr>
+                                    <td>{{ grade.date|date:"d/m/Y" }}</td>
+                                    <td>{{ grade.subject }}</td>
+                                    <td>{{ grade.get_grade_type_display }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if grade.value >= 10 %}success{% else %}danger{% endif %}">
+                                            {{ grade.value }}/20
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune note disponible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5>Absences/Retards</h5>
+            </div>
+            <div class="card-body">
+                {% if attendances %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                    <th>Justifié</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for attendance in attendances %}
+                                <tr>
+                                    <td>{{ attendance.date|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if attendance.status == 'ABSENT' %}danger{% elif attendance.status == 'RETARD' %}warning{% else %}info{% endif %}">
+                                            {{ attendance.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if attendance.justified %}
+                                            <span class="badge bg-success">Oui</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Non</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune absence enregistrée</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if assignments %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5>Devoirs à venir</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Matière</th>
+                                <th>Date limite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for assignment in assignments %}
+                            <tr>
+                                <td>{{ assignment.title }}</td>
+                                <td>{{ assignment.subject }}</td>
+                                <td>{{ assignment.due_date|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
