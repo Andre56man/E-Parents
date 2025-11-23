@@ -1,17 +1,18 @@
 /* Styles personnalisés pour E-Parent */
 
 :root {
+    /* Thème limité à deux couleurs : bleu et blanc */
     --primary-color: #0d6efd;
-    --secondary-color: #6c757d;
-    --success-color: #198754;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
-    --info-color: #0dcaf0;
+    --secondary-color: #0a58ca; /* variation de bleu */
+    --success-color: #0d6efd;   /* forcé en bleu */
+    --danger-color: #0d6efd;    /* forcé en bleu */
+    --warning-color: #0d6efd;   /* forcé en bleu */
+    --info-color: #0d6efd;      /* forcé en bleu */
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -64,6 +65,80 @@ footer {
 /* Hero section styling */
 .hero-section {
     background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+}
+
+/* Harmonisation bleu/blanc pour lensemble de lapp */
+
+/* Fonds clairs -> blanc */
+.bg-light {
+    background-color: #ffffff !important;
+}
+
+/* Boutons contextuels -> bleu/primary */
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info,
+.btn-secondary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-warning,
+.btn-outline-info,
+.btn-outline-secondary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Badges contextuels -> bleu */
+.badge.bg-success,
+.badge.bg-danger,
+.badge.bg-warning,
+.badge.bg-info,
+.badge.bg-secondary,
+.badge.bg-light {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+/* Alertes contextuelles -> bleu/blanc */
+.alert-success,
+.alert-danger,
+.alert-warning,
+.alert-info,
+.alert-secondary {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    border-color: var(--primary-color) !important;
+    color: #0a58ca !important;
+}
+
+/* Liens accentués en bleu */
+a,
+a:hover,
+a:focus {
+    color: var(--primary-color);
+}
+
+/* Footer texte atténué en bleu doux plutôt que gris */
+.text-muted {
+    color: rgba(13, 110, 253, 0.6) !important;
+}
+
+/* Textes contextuels -> bleu/blanc */
+.text-success,
+.text-danger,
+.text-warning,
+.text-info,
+.text-secondary {
+    color: var(--primary-color) !important;
+}
+
+.text-light {
+    color: #ffffff !important;
 }
 
 /* Button hover effects */

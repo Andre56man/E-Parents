@@ -4,7 +4,7 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="hero-section bg-primary text-white py-5 mb-5 rounded">
+<div class="hero-section bg-primary bg-gradient text-white py-5 mb-5 rounded shadow-lg">
     <div class="container text-center">
         <h1 class="display-4 mb-3">
             <i class="bi bi-mortarboard-fill"></i> E-Parent
@@ -20,12 +20,12 @@
 </div>
 
 <!-- Features Section -->
-<div class="container">
-    <h2 class="text-center mb-5">Fonctionnalités principales</h2>
+<div class="container py-5">
+    <h2 class="text-center mb-5 text-primary fw-bold">Fonctionnalités principales</h2>
     
     <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm border-0 rounded-3">
                 <div class="card-body text-center">
                     <i class="bi bi-journal-text display-4 text-primary mb-3"></i>
                     <h5 class="card-title">Suivi des notes</h5>
@@ -66,7 +66,7 @@
     
     <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm border-0 rounded-3">
                 <div class="card-body text-center">
                     <i class="bi bi-bell display-4 text-success mb-3"></i>
                     <h5 class="card-title">Notifications</h5>
@@ -79,7 +79,7 @@
         </div>
         
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm border-0 rounded-3">
                 <div class="card-body text-center">
                     <i class="bi bi-envelope display-4 text-danger mb-3"></i>
                     <h5 class="card-title">Communication</h5>
@@ -92,7 +92,7 @@
         </div>
         
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm border-0 rounded-3">
                 <div class="card-body text-center">
                     <i class="bi bi-shield-lock display-4 text-dark mb-3"></i>
                     <h5 class="card-title">Sécurité</h5>
@@ -107,11 +107,11 @@
 </div>
 
 <!-- For Parents Section -->
-<div class="bg-light py-5 mb-5">
+<div class="bg-primary text-white py-5 mb-5">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h2 class="mb-4">Pour les Parents</h2>
+                <h2 class="mb-4 fw-bold">Pour les Parents</h2>
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -136,20 +136,20 @@
                 </ul>
             </div>
             <div class="col-md-6 text-center">
-                <i class="bi bi-people display-1 text-primary"></i>
+                <i class="bi bi-people display-1 text-white-50"></i>
             </div>
         </div>
     </div>
 </div>
 
 <!-- For Teachers Section -->
-<div class="container py-5">
-    <div class="row align-items-center">
+<div class="container py-5 mb-4">
+    <div class="row align-items-center bg-white rounded-3 shadow-sm p-4">
         <div class="col-md-6 text-center order-md-2">
             <i class="bi bi-person-badge display-1 text-primary"></i>
         </div>
         <div class="col-md-6 order-md-1">
-            <h2 class="mb-4">Pour les Enseignants</h2>
+            <h2 class="mb-4 text-primary fw-bold">Pour les Enseignants</h2>
             <ul class="list-unstyled">
                 <li class="mb-3">
                     <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -177,7 +177,7 @@
 </div>
 
 <!-- CTA Section -->
-<div class="bg-primary text-white py-5 rounded mb-4">
+<div class="bg-primary bg-gradient text-white py-5 rounded mb-4 shadow-lg">
     <div class="container text-center">
         <h3 class="mb-3">Prêt à commencer ?</h3>
         <p class="lead mb-4">Connectez-vous pour accéder à votre espace personnel</p>
@@ -193,10 +193,10 @@
 
 <!-- Quick Access Section -->
 <div class="container mb-5">
-    <div class="card shadow border-0">
+    <div class="card shadow border-0 bg-white rounded-3">
         <div class="card-body text-center p-4">
-            <h4 class="mb-3">Accès rapide</h4>
-            <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg">
+            <h4 class="mb-3 text-primary fw-bold">Accès rapide</h4>
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg px-4">
                 <i class="bi bi-box-arrow-in-right"></i> Page de connexion
             </a>
         </div>
