@@ -83,7 +83,7 @@ class TeacherClassesView(generics.ListAPIView):
         user = self.request.user
         direct_classes = Class.objects.filter(teacher=user)
         via_subjects = Class.objects.filter(class_subjects__teacher=user)
-        return (direct_classes | via_subjects).distinct().select_related('school')
+        return (direct_classes | via_subjects).distinct()
 
 
 class TeacherClassStudentsView(generics.ListAPIView):

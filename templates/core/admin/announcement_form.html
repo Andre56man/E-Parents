@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} une annonce - Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-megaphone-fill"></i> {{ action }} une annonce
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">
+                            {{ form.title.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger small">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.message.id_for_label }}" class="form-label">
+                            {{ form.message.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <div class="text-danger small">{{ form.message.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.class_obj.id_for_label }}" class="form-label">
+                            {{ form.class_obj.label }}
+                        </label>
+                        {{ form.class_obj }}
+                        {% if form.class_obj.help_text %}
+                            <small class="form-text text-muted d-block mt-1">
+                                <i class="bi bi-info-circle"></i> {{ form.class_obj.help_text }}
+                            </small>
+                        {% endif %}
+                        {% if form.class_obj.errors %}
+                            <div class="text-danger small">{{ form.class_obj.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                {{ form.is_active.label }}
+                            </label>
+                        </div>
+                        {% if form.is_active.help_text %}
+                            <small class="form-text text-muted d-block mt-1">
+                                <i class="bi bi-info-circle"></i> {{ form.is_active.help_text }}
+                            </small>
+                        {% endif %}
+                        {% if form.is_active.errors %}
+                            <div class="text-danger small">{{ form.is_active.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Enregistrer
+                        </button>
+                        <a href="{% url 'core:admin_announcements_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

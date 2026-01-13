@@ -53,7 +53,7 @@ class Class(models.Model):
     
     name = models.CharField(max_length=50, verbose_name='Nom de la classe')
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, verbose_name='Niveau')
-    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='classes', verbose_name='Établissement')
+    school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True, blank=True, related_name='classes', verbose_name='Établissement')
     teacher = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -70,7 +70,7 @@ class Class(models.Model):
         verbose_name = 'Classe'
         verbose_name_plural = 'Classes'
         ordering = ['level', 'name']
-        unique_together = ['name', 'academic_year', 'school']
+        unique_together = ['name', 'academic_year']
     
     def __str__(self):
         return f"{self.name} - {self.academic_year}"
@@ -279,4 +279,38 @@ class ClassSubject(models.Model):
     
     def __str__(self):
         return f"{self.class_obj} - {self.subject}"
+
+
+class Announcement(models.Model):
+    """
+    Modèle représentant une annonce publique affichée sur la page d'accueil
+    """
+    title = models.CharField(max_length=200, verbose_name='Titre')
+    message = models.TextField(verbose_name='Message')
+    class_obj = models.ForeignKey(
+        Class,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='announcements',
+        verbose_name='Classe concernée (optionnel)'
+    )
+    is_active = models.BooleanField(default=True, verbose_name='Active')
+    created_by = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='announcements_created',
+        verbose_name='Créé par'
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Date de création')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Date de modification')
+    
+    class Meta:
+        verbose_name = 'Annonce'
+        verbose_name_plural = 'Annonces'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.title
 

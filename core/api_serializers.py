@@ -32,16 +32,12 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
 class ClassSerializer(serializers.ModelSerializer):
-    school_name = serializers.CharField(source='school.name', read_only=True)
-
     class Meta:
         model = Class
         fields = [
             'id',
             'name',
             'level',
-            'school',
-            'school_name',
             'academic_year',
         ]
 

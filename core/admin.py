@@ -1,15 +1,8 @@
 from django.contrib import admin
 from .models import (
-    School, Subject, Class, Student, Grade, 
-    Attendance, Assignment, ClassSubject
+    Subject, Class, Student, Grade, 
+    Attendance, Assignment, ClassSubject, Announcement
 )
-
-
-@admin.register(School)
-class SchoolAdmin(admin.ModelAdmin):
-    list_display = ['name', 'address', 'phone', 'email', 'created_at']
-    search_fields = ['name', 'address']
-    list_filter = ['created_at']
 
 
 @admin.register(Subject)
@@ -21,8 +14,8 @@ class SubjectAdmin(admin.ModelAdmin):
 
 @admin.register(Class)
 class ClassAdmin(admin.ModelAdmin):
-    list_display = ['name', 'level', 'school', 'teacher', 'academic_year', 'created_at']
-    list_filter = ['level', 'academic_year', 'school']
+    list_display = ['name', 'level', 'teacher', 'academic_year', 'created_at']
+    list_filter = ['level', 'academic_year']
     search_fields = ['name', 'academic_year']
     autocomplete_fields = ['teacher']
 
@@ -33,7 +26,24 @@ class StudentAdmin(admin.ModelAdmin):
     list_filter = ['current_class', 'created_at']
     search_fields = ['student_number', 'first_name', 'last_name']
     filter_horizontal = ['parents']
-    autocomplete_fields = ['user', 'current_class']
+    autocomplete_fields = ['current_class']
+    
+    # Exclure le champ 'user' car on utilise 'parents' (ManyToMany) pour permettre plusieurs enfants par parent
+    fieldsets = (
+        ('Informations personnelles', {
+            'fields': ('student_number', 'first_name', 'last_name', 'date_of_birth', 'photo')
+        }),
+        ('Scolarité', {
+            'fields': ('current_class',)
+        }),
+        ('Parents', {
+            'fields': ('parents',),
+            'description': 'Sélectionnez un ou plusieurs parents. Un parent peut avoir plusieurs enfants.',
+        }),
+    )
+    
+    # Exclure explicitement le champ 'user' des champs disponibles
+    exclude = ['user']
 
 
 @admin.register(Grade)
@@ -70,3 +80,28 @@ class ClassSubjectAdmin(admin.ModelAdmin):
     search_fields = ['class_obj__name', 'subject__name']
     autocomplete_fields = ['class_obj', 'subject', 'teacher']
 
+
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ['title', 'class_obj', 'is_active', 'created_by', 'created_at']
+    list_filter = ['is_active', 'created_at', 'class_obj']
+    search_fields = ['title', 'message']
+    readonly_fields = ['created_by', 'created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Contenu', {
+            'fields': ('title', 'message', 'class_obj')
+        }),
+        ('Paramètres', {
+            'fields': ('is_active',)
+        }),
+        ('Informations', {
+            'fields': ('created_by', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def save_model(self, request, obj, form, change):
+        if not change:  # Si c'est une nouvelle annonce
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)

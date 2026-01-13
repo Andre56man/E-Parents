@@ -2,203 +2,348 @@
 
 {% block title %}Tableau de bord - Administrateur{% endblock %}
 
-{% block content %}
-<h2 class="mb-4"><i class="bi bi-house-door"></i> Tableau de bord Administrateur</h2>
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        border-radius: 15px;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    }
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+    .quick-action-card {
+        transition: all 0.3s;
+        border-left: 4px solid;
+    }
+    .quick-action-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+</style>
+{% endblock %}
 
-<div class="row mb-4">
-    <div class="col-md-2 col-sm-4 col-6 mb-3">
-        <div class="card bg-primary text-white h-100">
-            <div class="card-body text-center">
-                <h3>{{ total_students }}</h3>
-                <p class="mb-0 small">Élèves</p>
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="bi bi-speedometer2 text-primary"></i> Tableau de bord Administrateur
+    </h2>
+    <div>
+        <a href="{% url 'core:home' %}" class="btn btn-outline-primary">
+            <i class="bi bi-house"></i> Accueil
+        </a>
+    </div>
+</div>
+
+<!-- Statistiques principales -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50 mb-2">Élèves</h6>
+                        <h2 class="mb-0">{{ total_students }}</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'core:admin_students_list' %}" class="text-white text-decoration-none">
+                        <small>Voir tous <i class="bi bi-arrow-right"></i></small>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-2 col-sm-4 col-6 mb-3">
-        <div class="card bg-success text-white h-100">
-            <div class="card-body text-center">
-                <h3>{{ total_teachers }}</h3>
-                <p class="mb-0 small">Enseignants</p>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50 mb-2">Enseignants</h6>
+                        <h2 class="mb-0">{{ total_teachers }}</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="/admin/accounts/user/?role__exact=TEACHER" class="text-white text-decoration-none" target="_blank">
+                        <small>Voir tous <i class="bi bi-arrow-right"></i></small>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-2 col-sm-4 col-6 mb-3">
-        <div class="card bg-info text-white h-100">
-            <div class="card-body text-center">
-                <h3>{{ total_parents }}</h3>
-                <p class="mb-0 small">Parents</p>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50 mb-2">Parents</h6>
+                        <h2 class="mb-0">{{ total_parents }}</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-person-heart"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="/admin/accounts/user/?role__exact=PARENT" class="text-white text-decoration-none" target="_blank">
+                        <small>Voir tous <i class="bi bi-arrow-right"></i></small>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-2 col-sm-4 col-6 mb-3">
-        <div class="card bg-warning text-dark h-100">
-            <div class="card-body text-center">
-                <h3>{{ total_classes }}</h3>
-                <p class="mb-0 small">Classes</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-2 col-sm-4 col-6 mb-3">
-        <div class="card bg-secondary text-white h-100">
-            <div class="card-body text-center">
-                <h3>{{ total_subjects }}</h3>
-                <p class="mb-0 small">Matières</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-2 col-sm-4 col-6 mb-3">
-        <div class="card bg-dark text-white h-100">
-            <div class="card-body text-center">
-                <h3>{{ total_schools }}</h3>
-                <p class="mb-0 small">Établissements</p>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-dark-50 mb-2">Classes</h6>
+                        <h2 class="mb-0">{{ total_classes }}</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-book-fill"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'core:admin_classes_list' %}" class="text-dark text-decoration-none">
+                        <small>Voir toutes <i class="bi bi-arrow-right"></i></small>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card shadow mb-4">
-            <div class="card-header bg-danger text-white">
-                <h5><i class="bi bi-exclamation-triangle"></i> Taux d'absences (30 derniers jours)</h5>
+<!-- Statistiques secondaires -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm bg-secondary text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-journal-text stat-icon"></i>
+                <h3 class="mt-2">{{ total_subjects }}</h3>
+                <p class="mb-0">Matières</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm bg-danger text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-clipboard-check stat-icon"></i>
+                <h3 class="mt-2">{{ total_grades }}</h3>
+                <p class="mb-0">Notes</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card shadow-sm bg-primary text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-calendar-check stat-icon"></i>
+                <h3 class="mt-2">{{ total_assignments }}</h3>
+                <p class="mb-0">Devoirs</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions rapides - Ajout d'éléments -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow border-0">
+            <div class="card-header bg-gradient bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning-charge-fill"></i> Actions rapides - Ajouter des éléments
+                </h5>
             </div>
             <div class="card-body">
-                <h2 class="text-center">{{ absence_rate }}%</h2>
+                <div class="row g-3">
+                    <!-- Utilisateurs -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card quick-action-card h-100" style="border-left: 4px solid #0d6efd;">
+                            <div class="card-body">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-people"></i> Utilisateurs
+                                </h6>
+                                <div class="d-grid gap-2">
+                                    <a href="/admin/accounts/user/add/?role=PARENT" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="bi bi-person-plus"></i> Ajouter un parent
+                                    </a>
+                                    <a href="/admin/accounts/user/add/?role=TEACHER" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="bi bi-person-badge"></i> Ajouter un enseignant
+                                    </a>
+                                    <a href="/admin/accounts/user/add/?role=ADMIN" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="bi bi-shield-check"></i> Ajouter un admin
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Élèves -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card quick-action-card h-100" style="border-left: 4px solid #198754;">
+                            <div class="card-body">
+                                <h6 class="text-success mb-3">
+                                    <i class="bi bi-mortarboard"></i> Élèves
+                                </h6>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'core:admin_student_create' %}" class="btn btn-outline-success btn-sm">
+                                        <i class="bi bi-person-plus"></i> Ajouter un élève
+                                    </a>
+                                    <a href="{% url 'core:admin_students_list' %}" class="btn btn-outline-success btn-sm">
+                                        <i class="bi bi-list-ul"></i> Liste des élèves
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Classes -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card quick-action-card h-100" style="border-left: 4px solid #0dcaf0;">
+                            <div class="card-body">
+                                <h6 class="text-info mb-3">
+                                    <i class="bi bi-book"></i> Classes
+                                </h6>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'core:admin_class_create' %}" class="btn btn-outline-info btn-sm">
+                                        <i class="bi bi-plus-circle"></i> Ajouter une classe
+                                    </a>
+                                    <a href="{% url 'core:admin_classes_list' %}" class="btn btn-outline-info btn-sm">
+                                        <i class="bi bi-list-ul"></i> Liste des classes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Matières -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card quick-action-card h-100" style="border-left: 4px solid #ffc107;">
+                            <div class="card-body">
+                                <h6 class="text-warning mb-3">
+                                    <i class="bi bi-book"></i> Matières
+                                </h6>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'core:admin_subject_create' %}" class="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-plus-circle"></i> Ajouter une matière
+                                    </a>
+                                    <a href="{% url 'core:admin_subjects_list' %}" class="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-list-ul"></i> Liste des matières
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Annonces -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card quick-action-card h-100" style="border-left: 4px solid #0dcaf0;">
+                            <div class="card-body">
+                                <h6 class="text-info mb-3">
+                                    <i class="bi bi-megaphone"></i> Annonces
+                                </h6>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'core:admin_announcement_create' %}" class="btn btn-outline-info btn-sm">
+                                        <i class="bi bi-plus-circle"></i> Ajouter une annonce
+                                    </a>
+                                    <a href="{% url 'core:admin_announcements_list' %}" class="btn btn-outline-info btn-sm">
+                                        <i class="bi bi-list-ul"></i> Liste des annonces
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistiques et analyses -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow border-0">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Taux d'absences (30 derniers jours)
+                </h5>
+            </div>
+            <div class="card-body text-center py-5">
+                <div class="display-1 text-danger mb-3">{{ absence_rate }}%</div>
+                <p class="text-muted mb-0">Sur les 30 derniers jours</p>
             </div>
         </div>
     </div>
     
     <div class="col-md-6">
-        <div class="card shadow mb-4">
+        <div class="card shadow border-0">
             <div class="card-header bg-success text-white">
-                <h5><i class="bi bi-trophy"></i> Top 10 Classes (Moyennes)</h5>
+                <h5 class="mb-0">
+                    <i class="bi bi-trophy"></i> Top 10 Classes (Moyennes)
+                </h5>
             </div>
             <div class="card-body">
                 {% if classes_with_avg %}
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                        <table class="table table-hover">
+                            <thead class="table-light sticky-top">
                                 <tr>
                                     <th>Classe</th>
-                                    <th>Moyenne</th>
+                                    <th class="text-end">Moyenne</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for class_obj in classes_with_avg %}
                                 <tr>
-                                    <td>{{ class_obj.name }}</td>
-                                    <td><span class="badge bg-success">{{ class_obj.avg_grade|floatformat:2 }}/20</span></td>
+                                    <td>
+                                        <i class="bi bi-book text-primary"></i> {{ class_obj.name }}
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="badge bg-success fs-6">{{ class_obj.avg_grade|floatformat:2 }}/20</span>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 {% else %}
-                    <p class="text-muted">Aucune donnée disponible</p>
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3">Aucune donnée disponible</p>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
 
-<!-- Administration Section -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h5><i class="bi bi-gear"></i> Administration - Accès rapide</h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <h6 class="text-primary mb-3"><i class="bi bi-people"></i> Gestion des utilisateurs</h6>
-                        <div class="d-grid gap-2">
-                            <a href="/admin/accounts/user/add/" class="btn btn-outline-primary" target="_blank">
-                                <i class="bi bi-person-plus"></i> Ajouter un utilisateur
-                            </a>
-                            <a href="/admin/accounts/user/" class="btn btn-outline-primary" target="_blank">
-                                <i class="bi bi-list-ul"></i> Voir tous les utilisateurs
-                            </a>
-                            <a href="/admin/accounts/loginlog/" class="btn btn-outline-secondary btn-sm" target="_blank">
-                                <i class="bi bi-clock-history"></i> Journaux de connexion
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <h6 class="text-success mb-3"><i class="bi bi-mortarboard"></i> Gestion des élèves</h6>
-                        <div class="d-grid gap-2">
-                            <a href="{% url 'core:admin_student_create' %}" class="btn btn-outline-success">
-                                <i class="bi bi-person-plus"></i> Ajouter un élève
-                            </a>
-                            <a href="{% url 'core:admin_students_list' %}" class="btn btn-outline-success">
-                                <i class="bi bi-list-ul"></i> Voir tous les élèves
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+<!-- Gestion complète -->
 <div class="row mb-4">
     <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header bg-info text-white">
-                <h6><i class="bi bi-building"></i> Gestion des établissements et classes</h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{% url 'core:admin_school_create' %}" class="btn btn-outline-info btn-sm">
-                        <i class="bi bi-plus-circle"></i> Ajouter un établissement
-                    </a>
-                    <a href="{% url 'core:admin_schools_list' %}" class="btn btn-outline-info btn-sm">
-                        <i class="bi bi-list-ul"></i> Voir les établissements
-                    </a>
-                    <hr>
-                    <a href="{% url 'core:admin_class_create' %}" class="btn btn-outline-info">
-                        <i class="bi bi-plus-circle"></i> Ajouter une classe
-                    </a>
-                    <a href="{% url 'core:admin_classes_list' %}" class="btn btn-outline-info">
-                        <i class="bi bi-list-ul"></i> Voir toutes les classes
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header bg-warning text-dark">
-                <h6><i class="bi bi-book"></i> Gestion des matières</h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{% url 'core:admin_subject_create' %}" class="btn btn-outline-warning">
-                        <i class="bi bi-plus-circle"></i> Ajouter une matière
-                    </a>
-                    <a href="{% url 'core:admin_subjects_list' %}" class="btn btn-outline-warning">
-                        <i class="bi bi-list-ul"></i> Voir toutes les matières
-                    </a>
-                    <hr>
-                    <a href="/admin/core/classsubject/add/" class="btn btn-outline-warning btn-sm" target="_blank">
-                        <i class="bi bi-link-45deg"></i> Associer matière à classe
-                    </a>
-                    <a href="/admin/core/classsubject/" class="btn btn-outline-warning btn-sm" target="_blank">
-                        <i class="bi bi-list-ul"></i> Voir les associations
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header bg-danger text-white">
-                <h6><i class="bi bi-journal-text"></i> Gestion des notes et absences</h6>
+        <div class="card shadow border-0">
+            <div class="card-header bg-secondary text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-journal-text"></i> Gestion des notes et absences
+                </h6>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
@@ -209,10 +354,10 @@
                         <i class="bi bi-list-ul"></i> Voir toutes les notes
                     </a>
                     <hr>
-                    <a href="/admin/core/attendance/add/" class="btn btn-outline-danger btn-sm" target="_blank">
+                    <a href="/admin/core/attendance/add/" class="btn btn-outline-warning btn-sm" target="_blank">
                         <i class="bi bi-plus-circle"></i> Enregistrer une absence
                     </a>
-                    <a href="/admin/core/attendance/" class="btn btn-outline-danger btn-sm" target="_blank">
+                    <a href="/admin/core/attendance/" class="btn btn-outline-warning btn-sm" target="_blank">
                         <i class="bi bi-list-ul"></i> Voir les absences
                     </a>
                 </div>
@@ -221,25 +366,59 @@
     </div>
     
     <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header bg-secondary text-white">
-                <h6><i class="bi bi-calendar-check"></i> Gestion des devoirs et notifications</h6>
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-calendar-check"></i> Gestion des devoirs et communications
+                </h6>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="/admin/core/assignment/add/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                    <a href="/admin/core/assignment/add/" class="btn btn-outline-primary btn-sm" target="_blank">
                         <i class="bi bi-plus-circle"></i> Publier un devoir
                     </a>
-                    <a href="/admin/core/assignment/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                    <a href="/admin/core/assignment/" class="btn btn-outline-primary btn-sm" target="_blank">
                         <i class="bi bi-list-ul"></i> Voir tous les devoirs
                     </a>
                     <hr>
-                    <a href="/admin/notifications/notification/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                    <a href="/admin/notifications/notification/" class="btn btn-outline-info btn-sm" target="_blank">
                         <i class="bi bi-bell"></i> Gérer les notifications
                     </a>
-                    <a href="/admin/messaging/conversation/" class="btn btn-outline-secondary btn-sm" target="_blank">
+                    <a href="/admin/messaging/conversation/" class="btn btn-outline-info btn-sm" target="_blank">
                         <i class="bi bi-envelope"></i> Voir les conversations
                     </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Associations -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow border-0">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-link-45deg"></i> Associations et configurations
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a href="/admin/core/classsubject/add/" class="btn btn-outline-info w-100" target="_blank">
+                            <i class="bi bi-link-45deg"></i> Associer matière à classe
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/admin/core/classsubject/" class="btn btn-outline-info w-100" target="_blank">
+                            <i class="bi bi-list-ul"></i> Voir les associations
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/admin/accounts/loginlog/" class="btn btn-outline-secondary w-100" target="_blank">
+                            <i class="bi bi-clock-history"></i> Journaux de connexion
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -251,10 +430,14 @@
     <div class="col-12">
         <div class="card shadow border-primary">
             <div class="card-header bg-primary text-white">
-                <h5><i class="bi bi-shield-lock"></i> Interface d'administration complète</h5>
+                <h5 class="mb-0">
+                    <i class="bi bi-shield-lock"></i> Interface d'administration complète
+                </h5>
             </div>
-            <div class="card-body text-center">
-                <p class="lead mb-4">Accédez à l'interface d'administration Django complète pour une gestion avancée</p>
+            <div class="card-body text-center py-4">
+                <p class="lead mb-4">
+                    Accédez à l'interface d'administration Django complète pour une gestion avancée de tous les éléments
+                </p>
                 <a href="/admin/" class="btn btn-primary btn-lg" target="_blank">
                     <i class="bi bi-shield-lock"></i> Ouvrir l'interface d'administration
                 </a>
@@ -267,4 +450,3 @@
     </div>
 </div>
 {% endblock %}
-

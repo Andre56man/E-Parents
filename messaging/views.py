@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.db.models import Q
 from .models import Conversation, Message
 from core.models import Student
-from core.models import Student
 
 
 @login_required
@@ -82,7 +81,6 @@ def create_conversation_view(request):
             conversation.participants.add(request.user, recipient)
             
             if student_id:
-                from core.models import Student
                 try:
                     student = Student.objects.get(id=student_id)
                     conversation.student = student

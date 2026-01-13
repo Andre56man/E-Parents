@@ -6,20 +6,54 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import (
     Student, Grade, Attendance, Assignment, Class, Subject,
-    ClassSubject, School
+    ClassSubject, Announcement
 )
-from .forms import SchoolForm, ClassForm, StudentForm, SubjectForm
+from .forms import ClassForm, StudentForm, SubjectForm, AnnouncementForm
 
 
 def home_view(request):
     """
-    Page d'accueil publique
+    Page d'accueil publique - accessible même pour les utilisateurs connectés
     """
-    # Si l'utilisateur est déjà connecté, rediriger vers le tableau de bord
-    if request.user.is_authenticated:
-        return redirect('core:dashboard')
+    from notifications.models import Notification
     
-    return render(request, 'core/home.html')
+    # Date de début de la semaine (lundi)
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    end_of_week = start_of_week + timedelta(days=6)
+    
+    # Annonces publiques actives (modèle Announcement)
+    announcements = Announcement.objects.filter(
+        is_active=True
+    ).order_by('-created_at')[:10]
+    
+    # Devoirs de la semaine à venir
+    week_assignments = Assignment.objects.filter(
+        due_date__date__gte=today,
+        due_date__date__lte=end_of_week
+    ).order_by('due_date')[:10]
+    
+    # Statistiques générales
+    total_students = Student.objects.count()
+    total_classes = Class.objects.count()
+    
+    # Notes récentes de la semaine
+    recent_grades = Grade.objects.filter(
+        date__gte=start_of_week,
+        date__lte=end_of_week
+    ).order_by('-date')[:5]
+    
+    context = {
+        'announcements': announcements,
+        'week_assignments': week_assignments,
+        'total_students': total_students,
+        'total_classes': total_classes,
+        'recent_grades': recent_grades,
+        'start_of_week': start_of_week,
+        'end_of_week': end_of_week,
+    }
+    
+    return render(request, 'core/home.html', context)
 
 
 def is_parent(user):
@@ -118,7 +152,6 @@ def admin_dashboard(request):
     total_parents = request.user.__class__.objects.filter(role='PARENT').count()
     total_classes = Class.objects.count()
     total_subjects = Subject.objects.count()
-    total_schools = School.objects.count()
     total_grades = Grade.objects.count()
     total_assignments = Assignment.objects.count()
     
@@ -140,7 +173,6 @@ def admin_dashboard(request):
         'total_parents': total_parents,
         'total_classes': total_classes,
         'total_subjects': total_subjects,
-        'total_schools': total_schools,
         'total_grades': total_grades,
         'total_assignments': total_assignments,
         'absence_rate': round(absence_rate, 2),
@@ -152,29 +184,8 @@ def admin_dashboard(request):
 
 @login_required
 @user_passes_test(is_admin)
-def admin_schools_list_view(request):
-    schools = School.objects.all().order_by('name')
-    return render(request, 'core/admin/schools_list.html', {'schools': schools})
-
-
-@login_required
-@user_passes_test(is_admin)
-def admin_school_create_view(request):
-    if request.method == 'POST':
-        form = SchoolForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Établissement créé avec succès.")
-            return redirect('core:admin_schools_list')
-    else:
-        form = SchoolForm()
-    return render(request, 'core/admin/school_form.html', {'form': form})
-
-
-@login_required
-@user_passes_test(is_admin)
 def admin_classes_list_view(request):
-    classes = Class.objects.select_related('school', 'teacher').order_by('level', 'name')
+    classes = Class.objects.select_related('teacher').order_by('level', 'name')
     return render(request, 'core/admin/classes_list.html', {'classes': classes})
 
 
@@ -232,6 +243,59 @@ def admin_subject_create_view(request):
     else:
         form = SubjectForm()
     return render(request, 'core/admin/subject_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_announcements_list_view(request):
+    """Liste des annonces pour l'admin"""
+    announcements = Announcement.objects.all().order_by('-created_at')
+    return render(request, 'core/admin/announcements_list.html', {'announcements': announcements})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_announcement_create_view(request):
+    """Créer une nouvelle annonce"""
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            announcement = form.save(commit=False)
+            announcement.created_by = request.user
+            announcement.save()
+            messages.success(request, "Annonce créée avec succès.")
+            return redirect('core:admin_announcements_list')
+    else:
+        form = AnnouncementForm()
+    return render(request, 'core/admin/announcement_form.html', {'form': form, 'action': 'Créer'})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_announcement_edit_view(request, announcement_id):
+    """Modifier une annonce"""
+    announcement = get_object_or_404(Announcement, id=announcement_id)
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST, instance=announcement)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Annonce modifiée avec succès.")
+            return redirect('core:admin_announcements_list')
+    else:
+        form = AnnouncementForm(instance=announcement)
+    return render(request, 'core/admin/announcement_form.html', {'form': form, 'announcement': announcement, 'action': 'Modifier'})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_announcement_delete_view(request, announcement_id):
+    """Supprimer une annonce"""
+    announcement = get_object_or_404(Announcement, id=announcement_id)
+    if request.method == 'POST':
+        announcement.delete()
+        messages.success(request, "Annonce supprimée avec succès.")
+        return redirect('core:admin_announcements_list')
+    return render(request, 'core/admin/announcement_delete.html', {'announcement': announcement})
 
 
 @login_required

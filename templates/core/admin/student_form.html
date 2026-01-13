@@ -3,13 +3,116 @@
 {% block title %}Nouvel élève - Admin{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Créer un élève</h2>
-
-<form method="post" enctype="multipart/form-data" class="card card-body shadow-sm">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">
-        <i class="bi bi-check-circle"></i> Enregistrer
-    </button>
-</form>
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-person-plus"></i> Créer un élève</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.student_number.id_for_label }}" class="form-label">
+                                {{ form.student_number.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.student_number }}
+                            {% if form.student_number.errors %}
+                                <div class="text-danger small">{{ form.student_number.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.current_class.id_for_label }}" class="form-label">
+                                {{ form.current_class.label }}
+                            </label>
+                            {{ form.current_class }}
+                            {% if form.current_class.errors %}
+                                <div class="text-danger small">{{ form.current_class.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                {{ form.first_name.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger small">{{ form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                {{ form.last_name.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger small">{{ form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">
+                                {{ form.date_of_birth.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.date_of_birth }}
+                            {% if form.date_of_birth.errors %}
+                                <div class="text-danger small">{{ form.date_of_birth.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.photo.id_for_label }}" class="form-label">
+                                {{ form.photo.label }}
+                            </label>
+                            {{ form.photo }}
+                            {% if form.photo.errors %}
+                                <div class="text-danger small">{{ form.photo.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            {{ form.parents.label }}
+                        </label>
+                        {% if form.parents.help_text %}
+                            <small class="form-text text-muted d-block mb-2">
+                                <i class="bi bi-info-circle"></i> {{ form.parents.help_text }}
+                            </small>
+                        {% endif %}
+                        <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                            {% for checkbox in form.parents %}
+                                <div class="form-check">
+                                    {{ checkbox.tag }}
+                                    <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                                        {{ checkbox.choice_label }}
+                                    </label>
+                                </div>
+                            {% empty %}
+                                <p class="text-muted">Aucun parent disponible. Veuillez d'abord créer des comptes parents.</p>
+                            {% endfor %}
+                        </div>
+                        {% if form.parents.errors %}
+                            <div class="text-danger small mt-2">{{ form.parents.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Enregistrer
+                        </button>
+                        <a href="{% url 'core:admin_students_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,6 +1,6 @@
-from django import forms
+﻿from django import forms
 from accounts.models import User
-from .models import Class, Student, Subject, Announcement
+from .models import Class, Student, Subject
 
 
 class ClassForm(forms.ModelForm):
@@ -20,7 +20,7 @@ class StudentForm(forms.ModelForm):
         queryset=User.objects.filter(role='PARENT'),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False,
-        help_text='Sélectionnez un ou plusieurs parents pour cet élève. Un parent peut avoir plusieurs enfants.',
+        help_text='SÃ©lectionnez un ou plusieurs parents pour cet Ã©lÃ¨ve. Un parent peut avoir plusieurs enfants.',
         label='Parents'
     )
     
@@ -30,7 +30,7 @@ class StudentForm(forms.ModelForm):
             'student_number', 'first_name', 'last_name', 'date_of_birth',
             'photo', 'current_class', 'parents',
         ]
-        exclude = ['user']  # Exclure explicitement le champ user pour éviter les conflits
+        exclude = ['user']  # Exclure explicitement le champ user pour Ã©viter les conflits
         widgets = {
             'student_number': forms.TextInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -49,19 +49,4 @@ class SubjectForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'code': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-        }
-
-class AnnouncementForm(forms.ModelForm):
-    class Meta:
-        model = Announcement
-        fields = ['title', 'message', 'class_obj', 'is_active']
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
-            'class_obj': forms.Select(attrs={'class': 'form-control'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
-        help_texts = {
-            'class_obj': 'Laissez vide pour une annonce generale a tous',
-            'is_active': 'Desactivez pour masquer l''annonce sans la supprimer',
         }
