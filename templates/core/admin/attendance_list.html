@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion des Absences - E-Parent{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-0">
+                <i class="bi bi-exclamation-octagon-fill"></i> Gestion des Absences/Retards
+            </h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'core:admin_attendance_create' %}" class="btn btn-danger">
+                <i class="bi bi-plus-circle-fill"></i> Enregistrer une Absence
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Chercher un élève..." 
+                           value="{{ request.GET.search }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-control">
+                        <option value="">-- Tous les statuts --</option>
+                        <option value="ABSENT" {% if request.GET.status == 'ABSENT' %}selected{% endif %}>Absent</option>
+                        <option value="RETARD" {% if request.GET.status == 'RETARD' %}selected{% endif %}>Retard</option>
+                        <option value="JUSTIFIE" {% if request.GET.status == 'JUSTIFIE' %}selected{% endif %}>Justifié</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="date" class="form-control" value="{{ request.GET.date }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-info w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau des absences -->
+    <div class="card shadow">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th><i class="bi bi-person"></i> Élève</th>
+                        <th><i class="bi bi-mortarboard"></i> Classe</th>
+                        <th><i class="bi bi-book"></i> Matière</th>
+                        <th><i class="bi bi-calendar-event"></i> Date</th>
+                        <th><i class="bi bi-exclamation-triangle"></i> Statut</th>
+                        <th><i class="bi bi-chat"></i> Raison</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attendance in attendances %}
+                    <tr>
+                        <td>
+                            <strong>{{ attendance.student.get_full_name }}</strong>
+                            <br>
+                            <small class="text-muted">#{{ attendance.student.student_number }}</small>
+                        </td>
+                        <td>{{ attendance.class_obj.name }}</td>
+                        <td>
+                            {% if attendance.subject %}
+                                <span class="badge bg-info">{{ attendance.subject.code }}</span>
+                            {% else %}
+                                <span class="text-muted">--</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <i class="bi bi-calendar"></i> {{ attendance.date|date:"d/m/Y" }}
+                        </td>
+                        <td>
+                            {% if attendance.status == 'ABSENT' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-x-circle"></i> Absent
+                                </span>
+                            {% elif attendance.status == 'RETARD' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-clock"></i> Retard
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Justifié
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if attendance.reason %}
+                                <small>{{ attendance.reason|truncatewords:5 }}</small>
+                            {% else %}
+                                <span class="text-muted small">--</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'core:admin_attendance_edit' attendance.id %}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal{{ attendance.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal de suppression -->
+                    <div class="modal fade" id="deleteModal{{ attendance.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Supprimer l'absence</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Êtes-vous sûr de vouloir supprimer l'absence de <strong>{{ attendance.student.get_full_name }}</strong> ?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <a href="{% url 'core:admin_attendance_delete' attendance.id %}" class="btn btn-danger">
+                                        Supprimer
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox"></i> Aucune absence enregistrée
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-x-circle"></i> Absences</h5>
+                    <p class="display-6 text-danger">{{ absence_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-clock"></i> Retards</h5>
+                    <p class="display-6 text-warning">{{ late_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-check-circle"></i> Justifiés</h5>
+                    <p class="display-6 text-success">{{ justified_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

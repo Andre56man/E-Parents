@@ -4,11 +4,16 @@ from django.contrib import messages
 from django.db.models import Avg, Count, Q
 from django.utils import timezone
 from datetime import datetime, timedelta
+from accounts.models import User
 from .models import (
     Student, Grade, Attendance, Assignment, Class, Subject,
-    ClassSubject, Announcement
+    ClassSubject, Announcement, Timetable
 )
-from .forms import ClassForm, StudentForm, SubjectForm, AnnouncementForm
+from .forms import (
+    ClassForm, StudentForm, SubjectForm, AnnouncementForm,
+    UserForm, AttendanceForm, AssignmentForm, TimetableForm,
+    ClassSubjectForm
+)
 
 
 def home_view(request):
@@ -401,3 +406,476 @@ def add_attendance_view(request):
     
     return render(request, 'core/teacher/add_attendance.html', context)
 
+
+# ===== UTILISATEURS =====
+
+def is_admin(user):
+    """Vérifie si l'utilisateur est administrateur"""
+    return user.is_authenticated and (user.is_admin() or user.is_superuser)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_users_list_view(request):
+    """Liste de tous les utilisateurs"""
+    search = request.GET.get('search', '')
+    role = request.GET.get('role', '')
+    
+    users = User.objects.all()
+    
+    if search:
+        users = users.filter(
+            Q(first_name__icontains=search) | 
+            Q(last_name__icontains=search) | 
+            Q(email__icontains=search)
+        )
+    
+    if role:
+        users = users.filter(role=role)
+    
+    context = {
+        'users': users,
+        'total_users': User.objects.count(),
+        'admin_count': User.objects.filter(role='ADMIN').count(),
+        'teacher_count': User.objects.filter(role='TEACHER').count(),
+        'parent_count': User.objects.filter(role='PARENT').count(),
+    }
+    
+    return render(request, 'core/admin/user_list.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_user_create_view(request):
+    """Créer un nouvel utilisateur"""
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            password1 = form.cleaned_data.get('password1')
+            password2 = form.cleaned_data.get('password2')
+            
+            if password1 and password2:
+                if password1 != password2:
+                    messages.error(request, "Les mots de passe ne correspondent pas!")
+                    return render(request, 'core/admin/user_form.html', {'form': form})
+                user.set_password(password1)
+            else:
+                messages.error(request, "Veuillez entrer un mot de passe!")
+                return render(request, 'core/admin/user_form.html', {'form': form})
+            
+            user.save()
+            messages.success(request, f"Utilisateur {user.get_full_name()} créé avec succès!")
+            return redirect('core:admin_users_list')
+    else:
+        form = UserForm()
+    
+    return render(request, 'core/admin/user_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_user_edit_view(request, user_id):
+    """Modifier un utilisateur"""
+    user = get_object_or_404(User, pk=user_id)
+    
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            password1 = form.cleaned_data.get('password1')
+            password2 = form.cleaned_data.get('password2')
+            
+            if password1 and password2:
+                if password1 != password2:
+                    messages.error(request, "Les mots de passe ne correspondent pas!")
+                    return render(request, 'core/admin/user_form.html', {'form': form})
+                user.set_password(password1)
+            
+            user.save()
+            messages.success(request, f"Utilisateur {user.get_full_name()} modifié avec succès!")
+            return redirect('core:admin_users_list')
+    else:
+        form = UserForm(instance=user)
+    
+    return render(request, 'core/admin/user_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_user_delete_view(request, user_id):
+    """Supprimer un utilisateur"""
+    user = get_object_or_404(User, pk=user_id)
+    user_name = user.get_full_name()
+    user.delete()
+    messages.success(request, f"Utilisateur {user_name} supprimé avec succès!")
+    return redirect('core:admin_users_list')
+
+
+# ===== ABSENCES =====
+
+@login_required
+@user_passes_test(is_admin)
+def admin_attendance_list_view(request):
+    """Liste de toutes les absences"""
+    search = request.GET.get('search', '')
+    status = request.GET.get('status', '')
+    date = request.GET.get('date', '')
+    
+    attendances = Attendance.objects.all()
+    
+    if search:
+        attendances = attendances.filter(
+            Q(student__first_name__icontains=search) |
+            Q(student__last_name__icontains=search)
+        )
+    
+    if status:
+        attendances = attendances.filter(status=status)
+    
+    if date:
+        attendances = attendances.filter(date=date)
+    
+    context = {
+        'attendances': attendances.order_by('-date'),
+        'absence_count': Attendance.objects.filter(status='ABSENT').count(),
+        'late_count': Attendance.objects.filter(status='RETARD').count(),
+        'justified_count': Attendance.objects.filter(status='JUSTIFIE').count(),
+    }
+    
+    return render(request, 'core/admin/attendance_list.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_attendance_create_view(request):
+    """Enregistrer une absence"""
+    if request.method == 'POST':
+        form = AttendanceForm(request.POST)
+        if form.is_valid():
+            attendance = form.save(commit=False)
+            attendance.created_by = request.user
+            attendance.save()
+            messages.success(request, "Absence enregistrée avec succès!")
+            return redirect('core:admin_attendance_list')
+    else:
+        form = AttendanceForm()
+    
+    return render(request, 'core/admin/attendance_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_attendance_edit_view(request, attendance_id):
+    """Modifier une absence"""
+    attendance = get_object_or_404(Attendance, pk=attendance_id)
+    
+    if request.method == 'POST':
+        form = AttendanceForm(request.POST, instance=attendance)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Absence modifiée avec succès!")
+            return redirect('core:admin_attendance_list')
+    else:
+        form = AttendanceForm(instance=attendance)
+    
+    return render(request, 'core/admin/attendance_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_attendance_delete_view(request, attendance_id):
+    """Supprimer une absence"""
+    attendance = get_object_or_404(Attendance, pk=attendance_id)
+    student_name = attendance.student.get_full_name()
+    attendance.delete()
+    messages.success(request, f"Absence de {student_name} supprimée!")
+    return redirect('core:admin_attendance_list')
+
+
+# ===== DEVOIRS =====
+
+@login_required
+@user_passes_test(is_admin)
+def admin_assignment_list_view(request):
+    """Liste de tous les devoirs"""
+    search = request.GET.get('search', '')
+    class_id = request.GET.get('class', '')
+    subject_id = request.GET.get('subject', '')
+    assignment_type = request.GET.get('type', '')
+    
+    assignments = Assignment.objects.all()
+    
+    if search:
+        assignments = assignments.filter(title__icontains=search)
+    
+    if class_id:
+        assignments = assignments.filter(class_obj_id=class_id)
+    
+    if subject_id:
+        assignments = assignments.filter(subject_id=subject_id)
+    
+    if assignment_type:
+        if assignment_type == 'devoir':
+            assignments = assignments.filter(is_exam=False)
+        elif assignment_type == 'examen':
+            assignments = assignments.filter(is_exam=True)
+    
+    context = {
+        'assignments': assignments.order_by('-due_date'),
+        'classes': Class.objects.all(),
+        'subjects': Subject.objects.all(),
+        'assignment_count': Assignment.objects.count(),
+        'exam_count': Assignment.objects.filter(is_exam=True).count(),
+        'upcoming_count': Assignment.objects.filter(
+            due_date__gte=timezone.now(),
+            due_date__lte=timezone.now() + timedelta(days=7)
+        ).count(),
+    }
+    
+    return render(request, 'core/admin/assignment_list.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_assignment_create_view(request):
+    """Créer un nouveau devoir"""
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Devoir créé avec succès!")
+            return redirect('core:admin_assignment_list')
+    else:
+        form = AssignmentForm()
+    
+    return render(request, 'core/admin/assignment_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_assignment_edit_view(request, assignment_id):
+    """Modifier un devoir"""
+    assignment = get_object_or_404(Assignment, pk=assignment_id)
+    
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST, request.FILES, instance=assignment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Devoir modifié avec succès!")
+            return redirect('core:admin_assignment_list')
+    else:
+        form = AssignmentForm(instance=assignment)
+    
+    return render(request, 'core/admin/assignment_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_assignment_delete_view(request, assignment_id):
+    """Supprimer un devoir"""
+    assignment = get_object_or_404(Assignment, pk=assignment_id)
+    title = assignment.title
+    assignment.delete()
+    messages.success(request, f"Devoir '{title}' supprimé!")
+    return redirect('core:admin_assignment_list')
+
+
+# ===== EMPLOI DU TEMPS =====
+
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable_list_view(request):
+    """Liste complète de l'emploi du temps"""
+    class_id = request.GET.get('class', '')
+    day = request.GET.get('day', '')
+    
+    timetables = Timetable.objects.all()
+    
+    if class_id:
+        timetables = timetables.filter(class_obj_id=class_id)
+    
+    if day:
+        timetables = timetables.filter(day=day)
+    
+    context = {
+        'timetables': timetables.order_by('day', 'start_time'),
+        'classes': Class.objects.all(),
+        'total_slots': Timetable.objects.count(),
+        'class_count': Class.objects.count(),
+        'subject_count': Subject.objects.count(),
+    }
+    
+    return render(request, 'core/admin/timetable_list.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable_create_view(request):
+    """Ajouter une leçon à l'emploi du temps"""
+    if request.method == 'POST':
+        form = TimetableForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Leçon ajoutée à l'emploi du temps!")
+            return redirect('core:admin_timetable_list')
+    else:
+        form = TimetableForm()
+    
+    return render(request, 'core/admin/timetable_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable_edit_view(request, timetable_id):
+    """Modifier une leçon de l'emploi du temps"""
+    timetable = get_object_or_404(Timetable, pk=timetable_id)
+    
+    if request.method == 'POST':
+        form = TimetableForm(request.POST, instance=timetable)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Leçon modifiée!")
+            return redirect('core:admin_timetable_list')
+    else:
+        form = TimetableForm(instance=timetable)
+    
+    return render(request, 'core/admin/timetable_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable_delete_view(request, timetable_id):
+    """Supprimer une leçon de l'emploi du temps"""
+    timetable = get_object_or_404(Timetable, pk=timetable_id)
+    subject_name = timetable.subject.name
+    class_name = timetable.class_obj.name
+    timetable.delete()
+    messages.success(request, f"Leçon {subject_name} en {class_name} supprimée!")
+    return redirect('core:admin_timetable_list')
+
+
+# ===== MATIÈRES PAR CLASSE (ClassSubject) =====
+
+@login_required
+@user_passes_test(is_admin)
+def admin_class_subject_list_view(request):
+    """Liste des attributions matière-classe-enseignant"""
+    class_id = request.GET.get('class', '')
+    subject_id = request.GET.get('subject', '')
+    
+    class_subjects = ClassSubject.objects.all()
+    
+    if class_id:
+        class_subjects = class_subjects.filter(class_obj_id=class_id)
+    
+    if subject_id:
+        class_subjects = class_subjects.filter(subject_id=subject_id)
+    
+    total = class_subjects.count()
+    assigned = class_subjects.exclude(teacher__isnull=True).count()
+    unassigned = total - assigned
+    
+    context = {
+        'class_subjects': class_subjects,
+        'classes': Class.objects.all(),
+        'subjects': Subject.objects.all(),
+        'total_assignments': total,
+        'assigned_count': assigned,
+        'unassigned_count': unassigned,
+    }
+    
+    return render(request, 'core/admin/class_subject_list.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_class_subject_create_view(request):
+    """Ajouter une attribution matière à une classe"""
+    if request.method == 'POST':
+        form = ClassSubjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Attribution ajoutée avec succès!")
+            return redirect('core:admin_class_subject_list')
+    else:
+        form = ClassSubjectForm()
+    
+    return render(request, 'core/admin/class_subject_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_class_subject_edit_view(request, class_subject_id):
+    """Modifier une attribution matière"""
+    class_subject = get_object_or_404(ClassSubject, pk=class_subject_id)
+    
+    if request.method == 'POST':
+        form = ClassSubjectForm(request.POST, instance=class_subject)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Attribution modifiée!")
+            return redirect('core:admin_class_subject_list')
+    else:
+        form = ClassSubjectForm(instance=class_subject)
+    
+    return render(request, 'core/admin/class_subject_form.html', {'form': form})
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_class_subject_delete_view(request, class_subject_id):
+    """Supprimer une attribution matière"""
+    class_subject = get_object_or_404(ClassSubject, pk=class_subject_id)
+    subject_name = class_subject.subject.name
+    class_name = class_subject.class_obj.name
+    class_subject.delete()
+    messages.success(request, f"Attribution {subject_name} en {class_name} supprimée!")
+    return redirect('core:admin_class_subject_list')
+
+
+# ===== DÉTAILS ENFANT PARENT (avec emploi du temps) =====
+
+@login_required
+def student_detail_view(request, student_id):
+    """Afficher les détails d'un étudiant (pour les parents)"""
+    student = get_object_or_404(Student, id=student_id)
+    
+    # Vérifier que c'est un parent de cet enfant
+    if request.user not in student.parents.all() and not is_admin(request.user):
+        messages.error(request, "Vous n'avez pas accès à ces informations.")
+        return redirect('core:home')
+    
+    # Moyenne par matière
+    subjects_avg = {}
+    for subject in Subject.objects.all():
+        grades = Grade.objects.filter(student=student, subject=subject)
+        if grades.exists():
+            avg = grades.aggregate(Avg('value'))['value__avg']
+            subjects_avg[subject] = round(avg, 2) if avg else None
+    
+    # Absences
+    attendances = Attendance.objects.filter(student=student).order_by('-date')[:10]
+    
+    # Devoirs à venir
+    now = timezone.now()
+    assignments = Assignment.objects.filter(
+        class_obj=student.current_class,
+        due_date__gte=now
+    ).order_by('due_date')[:5]
+    
+    # Emploi du temps de la classe
+    if student.current_class:
+        timetables = Timetable.objects.filter(class_obj=student.current_class).order_by('day', 'start_time')
+    else:
+        timetables = []
+    
+    context = {
+        'student': student,
+        'subjects_avg': subjects_avg,
+        'attendances': attendances,
+        'assignments': assignments,
+        'timetables': timetables,
+    }
+    
+    return render(request, 'core/parent/student_detail.html', context)

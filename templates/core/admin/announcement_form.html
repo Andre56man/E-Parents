@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ action }} une annonce - Admin{% endblock %}
+{% block title %}{% if form.instance.id %}Modifier{% else %}Ajouter{% endif %} une Annonce - E-Parent{% endblock %}
 
 {% block content %}
 <div class="row">

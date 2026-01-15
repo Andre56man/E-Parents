@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion des Devoirs - E-Parent{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-0">
+                <i class="bi bi-clipboard-check-fill"></i> Gestion des Devoirs/Examens
+            </h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'core:admin_assignment_create' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle-fill"></i> Ajouter un Devoir
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Chercher par titre..." 
+                           value="{{ request.GET.search }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="class" class="form-control">
+                        <option value="">-- Toutes les classes --</option>
+                        {% for class_obj in classes %}
+                            <option value="{{ class_obj.id }}" {% if request.GET.class == class_obj.id|stringformat:"s" %}selected{% endif %}>
+                                {{ class_obj.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="subject" class="form-control">
+                        <option value="">-- Toutes les matières --</option>
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}" {% if request.GET.subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                                {{ subject.code }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="type" class="form-control">
+                        <option value="">-- Tous les types --</option>
+                        <option value="devoir" {% if request.GET.type == 'devoir' %}selected{% endif %}>Devoir</option>
+                        <option value="examen" {% if request.GET.type == 'examen' %}selected{% endif %}>Examen</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-info w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau des devoirs -->
+    <div class="card shadow">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th><i class="bi bi-pencil"></i> Titre</th>
+                        <th><i class="bi bi-mortarboard"></i> Classe</th>
+                        <th><i class="bi bi-book"></i> Matière</th>
+                        <th><i class="bi bi-person-fill"></i> Enseignant</th>
+                        <th><i class="bi bi-calendar-event"></i> Date limite</th>
+                        <th><i class="bi bi-type"></i> Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignment in assignments %}
+                    <tr>
+                        <td>
+                            <strong>{{ assignment.title }}</strong>
+                            <br>
+                            <small class="text-muted">{{ assignment.description|truncatewords:10 }}</small>
+                        </td>
+                        <td>{{ assignment.class_obj.name }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ assignment.subject.code }}</span>
+                        </td>
+                        <td>{{ assignment.teacher.get_full_name }}</td>
+                        <td>
+                            <i class="bi bi-calendar"></i>
+                            {% if assignment.due_date %}
+                                {{ assignment.due_date|date:"d/m/Y H:i" }}
+                            {% else %}
+                                <span class="text-muted">--</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if assignment.is_exam %}
+                                <span class="badge bg-danger"><i class="bi bi-exclamation-circle"></i> Examen</span>
+                            {% else %}
+                                <span class="badge bg-warning"><i class="bi bi-pencil-square"></i> Devoir</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'core:admin_assignment_edit' assignment.id %}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal{{ assignment.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal de suppression -->
+                    <div class="modal fade" id="deleteModal{{ assignment.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Supprimer le devoir</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Êtes-vous sûr de vouloir supprimer le devoir <strong>{{ assignment.title }}</strong> ?</p>
+                                    <p class="text-danger small"><i class="bi bi-info-circle"></i> Cette action est irréversible.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <a href="{% url 'core:admin_assignment_delete' assignment.id %}" class="btn btn-danger">
+                                        Supprimer
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox"></i> Aucun devoir enregistré
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-clipboard-check"></i> Total Devoirs</h5>
+                    <p class="display-6 text-success">{{ assignment_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-exclamation-circle"></i> Examens</h5>
+                    <p class="display-6 text-danger">{{ exam_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-hourglass-split"></i> À venir</h5>
+                    <p class="display-6 text-warning">{{ upcoming_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

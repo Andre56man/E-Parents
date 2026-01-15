@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Aide Admin - E-Parent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-primary mb-3">
+                <i class="bi bi-question-circle"></i> Guide d'Administration
+            </h1>
+            <p class="lead text-muted">Tout ce que vous devez savoir pour gérer votre plateforme E-Parent</p>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <a href="{% url 'core:admin_students_list' %}" class="card shadow-sm border-0 rounded-3 text-decoration-none h-100 text-dark hover-lift">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-people-fill display-4 text-primary mb-3"></i>
+                    <h6 class="fw-bold mb-1">Élèves</h6>
+                    <small class="text-muted">Gérer les profils des élèves</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <a href="{% url 'core:admin_classes_list' %}" class="card shadow-sm border-0 rounded-3 text-decoration-none h-100 text-dark hover-lift">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-book-fill display-4 text-info mb-3"></i>
+                    <h6 class="fw-bold mb-1">Classes</h6>
+                    <small class="text-muted">Créer et gérer les classes</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <a href="{% url 'core:admin_subjects_list' %}" class="card shadow-sm border-0 rounded-3 text-decoration-none h-100 text-dark hover-lift">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-mortarboard-fill display-4 text-success mb-3"></i>
+                    <h6 class="fw-bold mb-1">Matières</h6>
+                    <small class="text-muted">Ajouter les matières</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <a href="{% url 'core:admin_announcements_list' %}" class="card shadow-sm border-0 rounded-3 text-decoration-none h-100 text-dark hover-lift">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-megaphone-fill display-4 text-warning mb-3"></i>
+                    <h6 class="fw-bold mb-1">Annonces</h6>
+                    <small class="text-muted">Publier des annonces</small>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <!-- Getting Started -->
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-rocket"></i> Démarrage Rapide</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Étape 1: Créer des Matières</h6>
+                            <p>Commencez par ajouter toutes les matières enseignées dans votre établissement.</p>
+                            <a href="{% url 'core:admin_subject_create' %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-plus-circle"></i> Ajouter une matière
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Étape 2: Créer des Classes</h6>
+                            <p>Créez les classes pour votre année scolaire.</p>
+                            <a href="{% url 'core:admin_class_create' %}" class="btn btn-sm btn-info">
+                                <i class="bi bi-plus-circle"></i> Ajouter une classe
+                            </a>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Étape 3: Ajouter des Élèves</h6>
+                            <p>Enregistrez les élèves et assignez-les à leurs classes.</p>
+                            <a href="{% url 'core:admin_student_create' %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-plus-circle"></i> Ajouter un élève
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Étape 4: Publier des Annonces</h6>
+                            <p>Communiquez avec les parents via des annonces publiées sur la page d'accueil.</p>
+                            <a href="{% url 'core:admin_announcement_create' %}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-plus-circle"></i> Ajouter une annonce
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-info text-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-stars"></i> Fonctionnalités Principales</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex gap-3">
+                                <div>
+                                    <i class="bi bi-people-fill text-primary fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold">Gestion des Élèves</h6>
+                                    <small class="text-muted">Ajoutez, modifiez et assignez les élèves aux classes. Gérez leurs profils facilement.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex gap-3">
+                                <div>
+                                    <i class="bi bi-book-fill text-info fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold">Gestion des Classes</h6>
+                                    <small class="text-muted">Créez des classes par niveau et année scolaire. Assignez des professeurs principaux.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex gap-3">
+                                <div>
+                                    <i class="bi bi-mortarboard-fill text-success fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold">Gestion des Matières</h6>
+                                    <small class="text-muted">Organisez toutes les matières enseignées avec codes et descriptions.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex gap-3">
+                                <div>
+                                    <i class="bi bi-megaphone-fill text-warning fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold">Gestion des Annonces</h6>
+                                    <small class="text-muted">Publiez des annonces générales ou ciblées par classe sur la page d'accueil.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-success text-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Bonnes Pratiques</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3 d-flex gap-3">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <div>
+                                <strong>Numéros d'élèves uniques:</strong> Utilisez un système cohérent de numérotation pour identifier les élèves.
+                            </div>
+                        </li>
+                        <li class="mb-3 d-flex gap-3">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <div>
+                                <strong>Codes de matières:</strong> Créez des codes courts et mémorables pour chaque matière (ex: MATH, FRA, ANG).
+                            </div>
+                        </li>
+                        <li class="mb-3 d-flex gap-3">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <div>
+                                <strong>Annonces régulières:</strong> Publiez des annonces importantes pour maintenir les parents informés.
+                            </div>
+                        </li>
+                        <li class="mb-3 d-flex gap-3">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <div>
+                                <strong>Photos des élèves:</strong> Ajoutez des photos pour identifier facilement chaque élève.
+                            </div>
+                        </li>
+                        <li class="d-flex gap-3">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <div>
+                                <strong>Année scolaire cohérente:</strong> Utilisez un format uniforme pour l'année scolaire (ex: 2024-2025).
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Return Button -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <a href="{% url 'core:dashboard' %}" class="btn btn-secondary btn-lg">
+                <i class="bi bi-arrow-left"></i> Retour au tableau de bord
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+{% endblock %}

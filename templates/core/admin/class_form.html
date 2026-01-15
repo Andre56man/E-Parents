@@ -1,15 +1,128 @@
 {% extends 'base.html' %}
 
-{% block title %}Nouvelle classe - Admin{% endblock %}
+{% block title %}{% if form.instance.id %}Modifier{% else %}Ajouter{% endif %} une Classe - E-Parent{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Créer une classe</h2>
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-6 fw-bold text-primary mb-2">
+                <i class="bi bi-book-plus"></i> {% if form.instance.id %}Modifier{% else %}Ajouter{% endif %} une Classe
+            </h1>
+            <p class="text-muted">Remplissez le formulaire ci-dessous pour {% if form.instance.id %}modifier{% else %}créer{% endif %} une classe</p>
+        </div>
+    </div>
 
-<form method="post" class="card card-body shadow-sm">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">
-        <i class="bi bi-check-circle"></i> Enregistrer
-    </button>
-</form>
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-5">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.name.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="alert alert-danger small mt-2 mb-0">
+                                    {{ form.name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.level.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.level.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.level }}
+                            {% if form.level.errors %}
+                                <div class="alert alert-danger small mt-2 mb-0">
+                                    {{ form.level.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.academic_year.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.academic_year.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.academic_year }}
+                            {% if form.academic_year.errors %}
+                                <div class="alert alert-danger small mt-2 mb-0">
+                                    {{ form.academic_year.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.teacher.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.teacher.label }}
+                            </label>
+                            {{ form.teacher }}
+                            {% if form.teacher.errors %}
+                                <div class="alert alert-danger small mt-2 mb-0">
+                                    {{ form.teacher.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.school %}
+                        <div class="mb-4">
+                            <label for="{{ form.school.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.school.label }}
+                            </label>
+                            {{ form.school }}
+                            {% if form.school.errors %}
+                                <div class="alert alert-danger small mt-2 mb-0">
+                                    {{ form.school.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 mt-5 pt-4 border-top">
+                            <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                                <i class="bi bi-check-circle"></i> {% if form.instance.id %}Mettre à jour{% else %}Créer{% endif %} la classe
+                            </button>
+                            <a href="{% url 'core:admin_classes_list' %}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Text -->
+            <div class="alert alert-info mt-4" role="alert">
+                <i class="bi bi-info-circle"></i> <strong>Aide:</strong> Tous les champs marqués avec <span class="text-danger">*</span> sont obligatoires.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+        border: 1px solid #dee2e6 !important;
+        border-radius: 8px;
+        padding: 0.6rem 0.9rem;
+        font-size: 0.95rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25) !important;
+        outline: none;
+    }
+</style>
 {% endblock %}

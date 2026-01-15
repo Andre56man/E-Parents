@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Matières des Classes - E-Parent{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-0">
+                <i class="bi bi-book-fill"></i> Gestion des Matières par Classe
+            </h2>
+            <p class="text-muted mt-2">Assignez des enseignants aux matières pour chaque classe</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'core:admin_class_subject_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Ajouter une Attribution
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <select name="class" class="form-control">
+                        <option value="">-- Toutes les classes --</option>
+                        {% for class_obj in classes %}
+                            <option value="{{ class_obj.id }}" {% if request.GET.class == class_obj.id|stringformat:"s" %}selected{% endif %}>
+                                {{ class_obj.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="subject" class="form-control">
+                        <option value="">-- Toutes les matières --</option>
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}" {% if request.GET.subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                                {{ subject.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-info w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau des attributions -->
+    <div class="card shadow">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th><i class="bi bi-mortarboard"></i> Classe</th>
+                        <th><i class="bi bi-book"></i> Matière</th>
+                        <th><i class="bi bi-person-fill"></i> Enseignant</th>
+                        <th><i class="bi bi-clock"></i> Heures/Semaine</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignment in class_subjects %}
+                    <tr>
+                        <td>
+                            <strong>{{ assignment.class_obj.name }}</strong>
+                            <br>
+                            <small class="text-muted">{{ assignment.class_obj.get_level_display }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ assignment.subject.code }}</span>
+                            {{ assignment.subject.name }}
+                        </td>
+                        <td>
+                            {% if assignment.teacher %}
+                                <i class="bi bi-person"></i> {{ assignment.teacher.get_full_name }}
+                                <br>
+                                <small class="text-muted">{{ assignment.teacher.email }}</small>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-exclamation-circle"></i> Non assigné
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ assignment.hours_per_week }}h</span>
+                        </td>
+                        <td>
+                            <a href="{% url 'core:admin_class_subject_edit' assignment.id %}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal{{ assignment.id }}">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal de suppression -->
+                    <div class="modal fade" id="deleteModal{{ assignment.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Supprimer l'attribution</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Êtes-vous sûr de vouloir supprimer l'attribution de <strong>{{ assignment.subject.name }}</strong> 
+                                    en <strong>{{ assignment.class_obj.name }}</strong> ?</p>
+                                    <p class="text-danger small"><i class="bi bi-info-circle"></i> Cette action est irréversible.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <a href="{% url 'core:admin_class_subject_delete' assignment.id %}" class="btn btn-danger">
+                                        Supprimer
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox"></i> Aucune attribution configurée
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Conseil -->
+    <div class="alert alert-info mt-4">
+        <i class="bi bi-lightbulb"></i> <strong>Conseil :</strong> Cette section permet d'assigner les enseignants aux matières pour chaque classe. 
+        Un enseignant peut avoir plusieurs matières et une matière peut avoir plusieurs enseignants dans différentes classes.
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-list"></i> Total Attributions</h5>
+                    <p class="display-6">{{ total_assignments }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-check-circle"></i> Assignées</h5>
+                    <p class="display-6 text-success">{{ assigned_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-exclamation-circle"></i> Non Assignées</h5>
+                    <p class="display-6 text-warning">{{ unassigned_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

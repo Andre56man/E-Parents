@@ -314,3 +314,46 @@ class Announcement(models.Model):
     def __str__(self):
         return self.title
 
+
+class Timetable(models.Model):
+    """
+    Modèle représentant un emploi du temps d'une classe
+    """
+    DAY_CHOICES = [
+        ('LUNDI', 'Lundi'),
+        ('MARDI', 'Mardi'),
+        ('MERCREDI', 'Mercredi'),
+        ('JEUDI', 'Jeudi'),
+        ('VENDREDI', 'Vendredi'),
+        ('SAMEDI', 'Samedi'),
+    ]
+    
+    class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='timetables', verbose_name='Classe')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='timetables', verbose_name='Matière')
+    teacher = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        limit_choices_to={'role': 'TEACHER'},
+        related_name='timetables',
+        verbose_name='Enseignant'
+    )
+    
+    day = models.CharField(max_length=20, choices=DAY_CHOICES, verbose_name='Jour')
+    start_time = models.TimeField(verbose_name='Heure de début')
+    end_time = models.TimeField(verbose_name='Heure de fin')
+    room = models.CharField(max_length=50, blank=True, null=True, verbose_name='Salle')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Emploi du temps'
+        verbose_name_plural = 'Emplois du temps'
+        unique_together = ['class_obj', 'day', 'start_time']
+        ordering = ['day', 'start_time']
+    
+    def __str__(self):
+        return f"{self.class_obj} - {self.subject} - {self.day} {self.start_time}"
+

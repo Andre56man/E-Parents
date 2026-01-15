@@ -1,35 +1,140 @@
 {% extends 'base.html' %}
 
-{% block title %}Élèves - Admin{% endblock %}
+{% block title %}Gestion des Élèves - E-Parent{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Élèves</h2>
-<a href="{% url 'core:admin_student_create' %}" class="btn btn-primary mb-3">
-    <i class="bi bi-plus-circle"></i> Ajouter un élève
-</a>
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-6 fw-bold text-primary mb-2">
+                <i class="bi bi-people-fill"></i> Gestion des Élèves
+            </h1>
+            <p class="text-muted">Total: <strong>{{ students.count }}</strong> élève(s)</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'core:admin_student_create' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-circle"></i> Ajouter un élève
+            </a>
+        </div>
+    </div>
 
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>Numéro</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Classe actuelle</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for student in students %}
-        <tr>
-            <td>{{ student.student_number }}</td>
-            <td>{{ student.last_name }}</td>
-            <td>{{ student.first_name }}</td>
-            <td>{{ student.current_class }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4" class="text-center text-muted">Aucun élève pour le moment.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body p-4">
+                    <form method="get" class="d-flex gap-2 flex-wrap">
+                        <div class="flex-grow-1" style="min-width: 250px;">
+                            <input type="text" name="search" class="form-control" placeholder="Rechercher par nom ou numéro d'élève..." 
+                                   value="{{ request.GET.search }}">
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="bi bi-search"></i> Rechercher
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students Table -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            {% if students %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="15%"><i class="bi bi-hash"></i> Numéro</th>
+                                <th width="20%"><i class="bi bi-person"></i> Nom</th>
+                                <th width="20%"><i class="bi bi-person"></i> Prénom</th>
+                                <th width="25%"><i class="bi bi-book"></i> Classe</th>
+                                <th width="20%" class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ student.student_number }}</span>
+                                </td>
+                                <td>{{ student.last_name }}</td>
+                                <td>{{ student.first_name }}</td>
+                                <td>
+                                    {% if student.current_class %}
+                                        <span class="badge bg-info">{{ student.current_class.name }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{% url 'core:admin_student_create' %}" class="btn btn-outline-primary" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" 
+                                                data-bs-target="#deleteModal{{ student.id }}" title="Supprimer">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteModal{{ student.id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirmation</h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Êtes-vous sûr de vouloir supprimer cet élève?
+                                                    <br><strong>{{ student.first_name }} {{ student.last_name }}</strong>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                    <form method="post" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <!-- Add delete endpoint -->\n                                            <button type="submit\" class=\"btn btn-danger\"><i class=\"bi bi-trash\"></i> Supprimer</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="text-muted mt-3 mb-0">Aucun élève pour le moment</p>
+                    <a href="{% url 'core:admin_student_create' %}" class="btn btn-primary mt-3">
+                        <i class="bi bi-plus-circle"></i> Ajouter le premier élève
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Back Link -->
+    <div class="mt-4">
+        <a href="{% url 'core:dashboard' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour au tableau de bord
+        </a>
+    </div>
+</div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .btn-group-sm > .btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+</style>
 {% endblock %}

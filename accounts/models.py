@@ -75,7 +75,9 @@ class User(AbstractUser):
     
     def is_admin(self):
         return self.role == 'ADMIN' or self.is_superuser
+    
 
+    expo_push_token = models.CharField(max_length=255, blank=True, null=True)
 
 class LoginLog(models.Model):
     """

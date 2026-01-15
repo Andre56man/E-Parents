@@ -3,56 +3,269 @@
 {% block title %}E-Parent - Plateforme de Suivi Scolaire{% endblock %}
 
 {% block content %}
+<style>
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes pulse-icon {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    .hero-section {
+        background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+        animation: fadeInDown 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,144C960,149,1056,139,1152,128C1248,117,1344,107,1392,101.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+        background-size: cover;
+        opacity: 0.3;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .stat-card-home {
+        animation: slideInUp 0.6s ease-out;
+        border: none;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    }
+    
+    .stat-card-home:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+    
+    .stat-card-home .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .icon-animation {
+        animation: pulse-icon 2s infinite;
+        font-size: 3rem;
+    }
+    
+    .card-container {
+        animation: slideInUp 0.8s ease-out;
+    }
+    
+    .feature-card {
+        border: none;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(13,110,253,0.1), rgba(13,202,240,0.1));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    }
+    
+    .feature-card:hover::before {
+        opacity: 1;
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+    
+    .list-group-item {
+        border: none;
+        border-left: 4px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+        border-left-color: #0d6efd;
+        background-color: #f8f9fa;
+    }
+    
+    .badge-animate {
+        animation: slideInUp 0.5s ease-out;
+    }
+    
+    h1.display-hero {
+        font-size: 3.5rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .btn-hero {
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+    
+    .btn-hero:hover {
+        transform: scale(1.05);
+    }
+</style>
+
 <!-- Hero Section -->
-<div class="hero-section bg-primary bg-gradient text-white py-5 mb-5 rounded shadow-lg">
-    <div class="container text-center">
-        <h1 class="display-4 mb-3">
-            <i class="bi bi-mortarboard-fill"></i> E-Parent
-        </h1>
-        <p class="lead">Plateforme numérique de suivi scolaire et académique</p>
-        <p class="mb-4">Suivez la scolarité de vos enfants en temps réel</p>
-        <div class="d-flex gap-3 justify-content-center flex-wrap">
-            <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5">
-                <i class="bi bi-box-arrow-in-right"></i> Se connecter
-            </a>
+<div class="hero-section text-white py-5 mb-5 rounded-4 shadow-lg">
+    <div class="hero-content">
+        <div class="container text-center">
+            <h1 class="display-hero mb-3 animate__animated animate__fadeInDown">
+                <i class="bi bi-mortarboard-fill icon-animation"></i> CHRIST ROI
+            </h1>
+            <p class="lead fw-normal mb-2" style="animation: fadeInDown 0.8s ease-out 0.2s backwards;">
+                🎓 Plateforme numérique de suivi scolaire et académique
+            </p>
+            <p class="fs-5 mb-4" style="animation: fadeInDown 0.8s ease-out 0.4s backwards;">
+                ✨ Suivez la scolarité de vos enfants en temps réel
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap" style="animation: fadeInDown 0.8s ease-out 0.6s backwards;">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-light btn-lg px-5 btn-hero">
+                        <i class="bi bi-speedometer2"></i> Tableau de Bord
+                    </a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5 btn-hero">
+                        <i class="bi bi-box-arrow-in-right"></i> Se Connecter
+                    </a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg px-5 btn-hero">
+                        <i class="bi bi-person-plus"></i> S'inscrire
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Annonces et Informations de la Semaine -->
+<!-- Statistiques Dashboard -->
+<div class="container mb-5">
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-sm-6">
+            <div class="card stat-card-home shadow-sm">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-people text-primary mb-3" style="font-size: 2.5rem;"></i>
+                    <h6 class="text-muted mb-2">Total Élèves</h6>
+                    <p class="stat-number mb-0">{{ total_students }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6">
+            <div class="card stat-card-home shadow-sm">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-book text-success mb-3" style="font-size: 2.5rem;"></i>
+                    <h6 class="text-muted mb-2">Classes</h6>
+                    <p class="stat-number mb-0">{{ total_classes }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6">
+            <div class="card stat-card-home shadow-sm">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-journal-text text-info mb-3" style="font-size: 2.5rem;"></i>
+                    <h6 class="text-muted mb-2">Matières</h6>
+                    <p class="stat-number mb-0">{{ total_subjects }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6">
+            <div class="card stat-card-home shadow-sm">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-megaphone text-warning mb-3" style="font-size: 2.5rem;"></i>
+                    <h6 class="text-muted mb-2">Annonces</h6>
+                    <p class="stat-number mb-0">{{ total_announcements }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Annonces et Informations -->
 <div class="container mb-5">
     <div class="row g-4">
         <!-- Annonces -->
         <div class="col-lg-8">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-info text-white">
-                    <h4 class="mb-0">
-                        <i class="bi bi-megaphone-fill"></i> Annonces
+            <div class="card shadow card-container border-0 rounded-4">
+                <div class="card-header bg-gradient bg-info text-white rounded-top-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="bi bi-megaphone-fill"></i> Annonces Récentes
+                        </h4>
                         {% if user.is_admin %}
-                            <a href="{% url 'core:admin_announcement_create' %}" class="btn btn-sm btn-light float-end">
+                            <a href="{% url 'core:admin_announcement_create' %}" class="btn btn-sm btn-light">
                                 <i class="bi bi-plus-circle"></i> Ajouter
                             </a>
                         {% endif %}
-                    </h4>
+                    </div>
                 </div>
                 <div class="card-body">
                     {% if announcements %}
                         <div class="list-group list-group-flush">
                             {% for announcement in announcements %}
-                                <div class="list-group-item border-0 px-0 py-3">
+                                <div class="list-group-item px-0 py-3 border-0" style="animation: slideInUp 0.6s ease-out;">
                                     <div class="d-flex align-items-start">
                                         <div class="flex-shrink-0">
-                                            <i class="bi bi-bullhorn-fill text-info fs-4"></i>
+                                            <div class="d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: linear-gradient(135deg, #0dcaf0, #0d6efd); border-radius: 50%;">
+                                                <i class="bi bi-bullhorn-fill text-white fs-5"></i>
+                                            </div>
                                         </div>
                                         <div class="flex-grow-1 ms-3">
-                                            <h6 class="mb-1 fw-bold">{{ announcement.title }}</h6>
-                                            <p class="mb-2 text-muted">{{ announcement.message|linebreaks }}</p>
+                                            <h6 class="mb-1 fw-bold text-dark">{{ announcement.title }}</h6>
+                                            <p class="mb-2 text-muted small">{{ announcement.message|truncatewords:30 }}</p>
                                             <small class="text-muted">
                                                 <i class="bi bi-calendar3"></i> {{ announcement.created_at|date:"d/m/Y à H:i" }}
                                                 {% if announcement.class_obj %}
                                                     | <span class="badge bg-info"><i class="bi bi-book"></i> {{ announcement.class_obj.name }}</span>
                                                 {% else %}
-                                                    | <span class="badge bg-secondary">Annonce générale</span>
+                                                    | <span class="badge bg-secondary"><i class="bi bi-megaphone"></i> Général</span>
                                                 {% endif %}
                                             </small>
                                         </div>
@@ -64,7 +277,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="text-center py-4">
+                        <div class="text-center py-5">
                             <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
                             <p class="text-muted mt-3">Aucune annonce pour le moment</p>
                         </div>
@@ -73,44 +286,32 @@
             </div>
         </div>
         
-        <!-- Statistiques -->
+        <!-- Devoirs et Événements -->
         <div class="col-lg-4">
-            <div class="card shadow-sm border-0 rounded-3 mb-3">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-bar-chart-fill"></i> Statistiques</h5>
+            <div class="card shadow card-container border-0 rounded-4 mb-4">
+                <div class="card-header bg-gradient bg-warning text-dark rounded-top-4">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-check-fill"></i> Devoirs à Venir
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span><i class="bi bi-people text-primary"></i> Élèves</span>
-                        <strong class="fs-5">{{ total_students }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-book text-success"></i> Classes</span>
-                        <strong class="fs-5">{{ total_classes }}</strong>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Devoirs de la semaine -->
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="bi bi-calendar-check-fill"></i> Devoirs cette Semaine</h5>
-                </div>
-                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                <div class="card-body" style="max-height: 350px; overflow-y: auto;">
                     {% if week_assignments %}
                         <div class="list-group list-group-flush">
                             {% for assignment in week_assignments %}
-                                <div class="list-group-item border-0 px-0 py-2">
+                                <div class="list-group-item border-0 px-0 py-3" style="animation: slideInUp 0.6s ease-out;">
                                     <div class="d-flex align-items-start">
-                                        <i class="bi bi-file-earmark-text text-warning me-2 mt-1"></i>
+                                        <i class="bi bi-file-earmark-text text-warning me-2 mt-1" style="font-size: 1.5rem;"></i>
                                         <div class="flex-grow-1">
-                                            <h6 class="mb-1 small">{{ assignment.title }}</h6>
+                                            <h6 class="mb-1 fw-500">{{ assignment.title }}</h6>
                                             <small class="text-muted d-block">
-                                                <i class="bi bi-calendar3"></i> {{ assignment.due_date|date:"d/m/Y à H:i" }}
+                                                <i class="bi bi-calendar3"></i> 
+                                                <span class="badge bg-{% if assignment.is_exam %}danger{% else %}warning{% endif %}">
+                                                    {{ assignment.due_date|date:"d/m/Y" }}
+                                                    {% if assignment.is_exam %} - EXAMEN{% endif %}
+                                                </span>
                                             </small>
                                             <small class="text-muted">
-                                                <i class="bi bi-book"></i> {{ assignment.subject.name }} | 
-                                                <i class="bi bi-people"></i> {{ assignment.class_obj.name }}
+                                                <i class="bi bi-book"></i> {{ assignment.subject.name }}
                                             </small>
                                         </div>
                                     </div>
@@ -121,7 +322,9 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p class="text-muted small mb-0">Aucun devoir cette semaine</p>
+                        <p class="text-muted small mb-0 text-center py-3">
+                            <i class="bi bi-check-circle text-success"></i> Aucun devoir cette semaine
+                        </p>
                     {% endif %}
                 </div>
             </div>
@@ -130,12 +333,12 @@
     
     <!-- Notes récentes de la semaine -->
     {% if recent_grades %}
-    <div class="row mt-4">
+    <div class="row mt-4 mb-5">
         <div class="col-12">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-success text-white">
+            <div class="card shadow card-container border-0 rounded-4">
+                <div class="card-header bg-gradient bg-success text-white rounded-top-4">
                     <h5 class="mb-0">
-                        <i class="bi bi-journal-text"></i> Notes Récentes de la Semaine
+                        <i class="bi bi-star-fill"></i> Notes Récentes
                     </h5>
                 </div>
                 <div class="card-body">
@@ -143,30 +346,28 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Élève</th>
-                                    <th>Matière</th>
-                                    <th>Note</th>
-                                    <th>Type</th>
-                                    <th>Date</th>
+                                    <th><i class="bi bi-person"></i> Élève</th>
+                                    <th><i class="bi bi-book"></i> Matière</th>
+                                    <th><i class="bi bi-star"></i> Note</th>
+                                    <th><i class="bi bi-tags"></i> Type</th>
+                                    <th><i class="bi bi-calendar3"></i> Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for grade in recent_grades %}
-                                <tr>
+                                <tr style="animation: slideInUp 0.6s ease-out;">
+                                    <td class="fw-500">{{ grade.student.first_name }} {{ grade.student.last_name }}</td>
+                                    <td><span class="badge bg-light text-dark">{{ grade.subject.name }}</span></td>
                                     <td>
-                                        <i class="bi bi-person"></i> {{ grade.student.first_name }} {{ grade.student.last_name }}
-                                    </td>
-                                    <td>{{ grade.subject.name }}</td>
-                                    <td>
-                                        <span class="badge bg-{% if grade.value >= 16 %}success{% elif grade.value >= 12 %}info{% elif grade.value >= 10 %}warning{% else %}danger{% endif %} fs-6">
-                                            {{ grade.value }}/20
+                                        <span class="badge badge-animate bg-{% if grade.value >= 16 %}success{% elif grade.value >= 12 %}info{% elif grade.value >= 10 %}warning{% else %}danger{% endif %} fs-6 px-2 py-2">
+                                            <i class="bi bi-check-circle"></i> {{ grade.value }}/20
                                         </span>
                                     </td>
                                     <td>
                                         <small class="text-muted">{{ grade.get_grade_type_display }}</small>
                                     </td>
                                     <td>
-                                        <small class="text-muted">{{ grade.date|date:"d/m/Y" }}</small>
+                                        <small class="text-muted"><i class="bi bi-calendar3"></i> {{ grade.date|date:"d/m/Y" }}</small>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -181,156 +382,183 @@
 </div>
 
 <!-- Features Section -->
-<div class="container py-5">
-    <h2 class="text-center mb-5 text-primary fw-bold">Fonctionnalités principales</h2>
+<div class="container py-5 mb-5">
+    <div class="text-center mb-5">
+        <h2 class="display-6 text-dark fw-bold mb-3">
+            <i class="bi bi-lightning-charge"></i> Fonctionnalités Principales
+        </h2>
+        <p class="lead text-muted">Découvrez tous les outils pour suivre la scolarité de vos enfants</p>
+    </div>
     
     <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0 rounded-3">
-                <div class="card-body text-center">
-                    <i class="bi bi-journal-text display-4 text-primary mb-3"></i>
-                    <h5 class="card-title">Suivi des notes</h5>
-                    <p class="card-text">
-                        Consultez les notes et moyennes de vos enfants en temps réel, 
-                        matière par matière, avec un historique complet.
+        <!-- Suivi des notes -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card feature-card h-100 shadow-sm border-0 rounded-4" style="animation: slideInUp 0.6s ease-out;">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Suivi des Notes</h5>
+                    <p class="card-text text-muted">
+                        Consultez les notes et moyennes de vos enfants en temps réel, matière par matière, avec historique complet.
                     </p>
+                    <a href="#" class="text-decoration-none small fw-600">En savoir plus <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
-                    <h5 class="card-title">Gestion des absences</h5>
-                    <p class="card-text">
-                        Recevez des notifications immédiates en cas d'absence ou de retard, 
-                        avec la possibilité de justifier les absences.
+        <!-- Gestion absences -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card feature-card h-100 shadow-sm border-0 rounded-4" style="animation: slideInUp 0.6s ease-out 0.1s backwards;">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-calendar-x"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Gestion des Absences</h5>
+                    <p class="card-text text-muted">
+                        Recevez des notifications immédiates en cas d'absence ou retard, avec possibilité de justifier les absences.
                     </p>
+                    <a href="#" class="text-decoration-none small fw-600">En savoir plus <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <i class="bi bi-calendar-check display-4 text-info mb-3"></i>
-                    <h5 class="card-title">Planning des devoirs</h5>
-                    <p class="card-text">
-                        Consultez le planning des devoirs et examens à venir, 
-                        avec les dates limites et les matières concernées.
+        <!-- Planning devoirs -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card feature-card h-100 shadow-sm border-0 rounded-4" style="animation: slideInUp 0.6s ease-out 0.2s backwards;">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Planning des Devoirs</h5>
+                    <p class="card-text text-muted">
+                        Consultez le planning des devoirs et examens à venir, avec dates limites et matières concernées.
                     </p>
+                    <a href="#" class="text-decoration-none small fw-600">En savoir plus <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0 rounded-3">
-                <div class="card-body text-center">
-                    <i class="bi bi-bell display-4 text-success mb-3"></i>
-                    <h5 class="card-title">Notifications</h5>
-                    <p class="card-text">
-                        Recevez des notifications automatiques pour chaque nouvelle note, 
-                        absence ou devoir publié.
+    <div class="row g-4">
+        <!-- Notifications -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card feature-card h-100 shadow-sm border-0 rounded-4" style="animation: slideInUp 0.6s ease-out 0.3s backwards;">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Notifications</h5>
+                    <p class="card-text text-muted">
+                        Recevez des notifications automatiques pour chaque nouvelle note, absence ou devoir publié instantanément.
                     </p>
+                    <a href="#" class="text-decoration-none small fw-600">En savoir plus <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0 rounded-3">
-                <div class="card-body text-center">
-                    <i class="bi bi-envelope display-4 text-danger mb-3"></i>
-                    <h5 class="card-title">Communication</h5>
-                    <p class="card-text">
-                        Échangez directement avec les enseignants via la messagerie intégrée 
-                        pour un suivi personnalisé.
+        <!-- Communication -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card feature-card h-100 shadow-sm border-0 rounded-4" style="animation: slideInUp 0.6s ease-out 0.4s backwards;">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Communication</h5>
+                    <p class="card-text text-muted">
+                        Échangez directement avec les enseignants via messagerie intégrée pour un suivi personnalisé et immédiat.
                     </p>
+                    <a href="#" class="text-decoration-none small fw-600">En savoir plus <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0 rounded-3">
-                <div class="card-body text-center">
-                    <i class="bi bi-shield-lock display-4 text-dark mb-3"></i>
-                    <h5 class="card-title">Sécurité</h5>
-                    <p class="card-text">
-                        Vos données sont protégées avec un système d'authentification sécurisé 
-                        et conforme au RGPD.
+        <!-- Emploi du temps -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card feature-card h-100 shadow-sm border-0 rounded-4" style="animation: slideInUp 0.6s ease-out 0.5s backwards;">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-clock-fill"></i>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">Emploi du Temps</h5>
+                    <p class="card-text text-muted">
+                        Accédez à l'emploi du temps complet avec détails des cours, enseignants et salles pour chaque classe.
                     </p>
+                    <a href="#" class="text-decoration-none small fw-600">En savoir plus <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- For Parents Section -->
-<div class="bg-primary text-white py-5 mb-5">
+<!-- Pour les Parents Section -->
+<div class="bg-gradient text-white py-5 mb-5" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h2 class="mb-4 fw-bold">Pour les Parents</h2>
+                <h2 class="mb-4 fw-bold">
+                    <i class="bi bi-heart-fill"></i> Pour les Parents
+                </h2>
                 <ul class="list-unstyled">
                     <li class="mb-3">
-                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                        Accès rapide et sécurisé aux informations scolaires
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Accès sécurisé aux informations scolaires
                     </li>
                     <li class="mb-3">
-                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                        Consultation des notes et moyennes en temps réel
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Suivi en temps réel des notes et moyennes
                     </li>
                     <li class="mb-3">
-                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <i class="bi bi-check-circle-fill me-2"></i>
                         Visualisation des absences et retards
                     </li>
                     <li class="mb-3">
-                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                        Planning des devoirs et examens
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Planning complet des devoirs et examens
                     </li>
                     <li class="mb-3">
-                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <i class="bi bi-check-circle-fill me-2"></i>
                         Communication directe avec les enseignants
                     </li>
                 </ul>
             </div>
             <div class="col-md-6 text-center">
-                <i class="bi bi-people display-1 text-white-50"></i>
+                <i class="bi bi-people display-1" style="opacity: 0.3;"></i>
             </div>
         </div>
     </div>
 </div>
 
-<!-- For Teachers Section -->
-<div class="container py-5 mb-4">
-    <div class="row align-items-center bg-white rounded-3 shadow-sm p-4">
-        <div class="col-md-6 text-center order-md-2">
+<!-- Pour les Enseignants Section -->
+<div class="container py-5 mb-5">
+    <div class="row align-items-center bg-white rounded-4 shadow p-5">
+        <div class="col-md-6 text-center order-md-2 mb-4 mb-md-0">
             <i class="bi bi-person-badge display-1 text-primary"></i>
         </div>
         <div class="col-md-6 order-md-1">
-            <h2 class="mb-4 text-primary fw-bold">Pour les Enseignants</h2>
+            <h2 class="mb-4 text-dark fw-bold">
+                <i class="bi bi-chalkboard-user"></i> Pour les Enseignants
+            </h2>
             <ul class="list-unstyled">
                 <li class="mb-3">
                     <i class="bi bi-check-circle-fill text-success me-2"></i>
-                    Saisie et modification des notes facilement
+                    <span class="text-dark">Saisie simple et rapide des notes</span>
                 </li>
                 <li class="mb-3">
                     <i class="bi bi-check-circle-fill text-success me-2"></i>
-                    Enregistrement des absences et retards
+                    <span class="text-dark">Enregistrement des absences en un clic</span>
                 </li>
                 <li class="mb-3">
                     <i class="bi bi-check-circle-fill text-success me-2"></i>
-                    Publication des devoirs et annonces
+                    <span class="text-dark">Publication des devoirs et annonces</span>
                 </li>
                 <li class="mb-3">
                     <i class="bi bi-check-circle-fill text-success me-2"></i>
-                    Consultation des listes d'élèves par classe
+                    <span class="text-dark">Gestion des listes de classe</span>
                 </li>
                 <li class="mb-3">
                     <i class="bi bi-check-circle-fill text-success me-2"></i>
-                    Communication avec les parents
+                    <span class="text-dark">Communication avec les parents</span>
                 </li>
             </ul>
         </div>
@@ -338,30 +566,28 @@
 </div>
 
 <!-- CTA Section -->
-<div class="bg-primary bg-gradient text-white py-5 rounded mb-4 shadow-lg">
+<div class="bg-gradient text-white py-5 rounded-4 mb-4 shadow-lg card-container" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%);">
     <div class="container text-center">
-        <h3 class="mb-3">Prêt à commencer ?</h3>
-        <p class="lead mb-4">Connectez-vous pour accéder à votre espace personnel</p>
-        <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5 mb-3">
-            <i class="bi bi-box-arrow-in-right"></i> Se connecter maintenant
-        </a>
-        <p class="mt-3 small">
-            <i class="bi bi-info-circle"></i> 
-            Vous n'avez pas encore de compte ? Contactez votre administrateur.
-        </p>
-    </div>
-</div>
-
-<!-- Quick Access Section -->
-<div class="container mb-5">
-    <div class="card shadow border-0 bg-white rounded-3">
-        <div class="card-body text-center p-4">
-            <h4 class="mb-3 text-primary fw-bold">Accès rapide</h4>
-            <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg px-4">
-                <i class="bi bi-box-arrow-in-right"></i> Page de connexion
-            </a>
+        <h2 class="mb-3 fw-bold">
+            <i class="bi bi-rocket-takeoff"></i> Prêt à Commencer ?
+        </h2>
+        <p class="lead mb-4">Accédez à votre espace personnel pour suivre la scolarité en temps réel</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            {% if user.is_authenticated %}
+                <a href="{% url 'core:dashboard' %}" class="btn btn-light btn-lg px-5 fw-bold">
+                    <i class="bi bi-speedometer2"></i> Aller au Tableau de Bord
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5 fw-bold">
+                    <i class="bi bi-box-arrow-in-right"></i> Se Connecter
+                </a>
+                <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg px-5 fw-bold">
+                    <i class="bi bi-person-plus"></i> S'Inscrire
+                </a>
+            {% endif %}
         </div>
     </div>
 </div>
+
 {% endblock %}
 

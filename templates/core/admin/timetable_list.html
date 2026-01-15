@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion de l'Emploi du Temps - E-Parent{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-0">
+                <i class="bi bi-calendar-week-fill"></i> Gestion de l'Emploi du Temps
+            </h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'core:admin_timetable_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Ajouter une Leçon
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <select name="class" class="form-control">
+                        <option value="">-- Toutes les classes --</option>
+                        {% for class_obj in classes %}
+                            <option value="{{ class_obj.id }}" {% if request.GET.class == class_obj.id|stringformat:"s" %}selected{% endif %}>
+                                {{ class_obj.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="day" class="form-control">
+                        <option value="">-- Tous les jours --</option>
+                        <option value="LUNDI" {% if request.GET.day == 'LUNDI' %}selected{% endif %}>Lundi</option>
+                        <option value="MARDI" {% if request.GET.day == 'MARDI' %}selected{% endif %}>Mardi</option>
+                        <option value="MERCREDI" {% if request.GET.day == 'MERCREDI' %}selected{% endif %}>Mercredi</option>
+                        <option value="JEUDI" {% if request.GET.day == 'JEUDI' %}selected{% endif %}>Jeudi</option>
+                        <option value="VENDREDI" {% if request.GET.day == 'VENDREDI' %}selected{% endif %}>Vendredi</option>
+                        <option value="SAMEDI" {% if request.GET.day == 'SAMEDI' %}selected{% endif %}>Samedi</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-info w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau de l'emploi du temps -->
+    <div class="card shadow">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th><i class="bi bi-mortarboard"></i> Classe</th>
+                        <th><i class="bi bi-book"></i> Matière</th>
+                        <th><i class="bi bi-person-fill"></i> Enseignant</th>
+                        <th><i class="bi bi-calendar-check"></i> Jour</th>
+                        <th><i class="bi bi-clock"></i> Heure</th>
+                        <th><i class="bi bi-door-closed"></i> Salle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule in timetables %}
+                    <tr>
+                        <td>
+                            <strong>{{ schedule.class_obj.name }}</strong>
+                            <br>
+                            <small class="text-muted">{{ schedule.class_obj.get_level_display }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ schedule.subject.code }}</span>
+                            {{ schedule.subject.name }}
+                        </td>
+                        <td>{{ schedule.teacher.get_full_name|default:"--" }}</td>
+                        <td>
+                            <i class="bi bi-calendar3"></i>
+                            {{ schedule.get_day_display }}
+                        </td>
+                        <td>
+                            <i class="bi bi-clock-history"></i>
+                            {{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}
+                        </td>
+                        <td>
+                            {% if schedule.room %}
+                                <span class="badge bg-secondary">{{ schedule.room }}</span>
+                            {% else %}
+                                <span class="text-muted">--</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'core:admin_timetable_edit' schedule.id %}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal{{ schedule.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal de suppression -->
+                    <div class="modal fade" id="deleteModal{{ schedule.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Supprimer la leçon</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Êtes-vous sûr de vouloir supprimer la leçon de <strong>{{ schedule.subject.name }}</strong> en {{ schedule.class_obj.name }} le <strong>{{ schedule.get_day_display }}</strong> ?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <a href="{% url 'core:admin_timetable_delete' schedule.id %}" class="btn btn-danger">
+                                        Supprimer
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox"></i> Aucune leçon enregistrée
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-clipboard-check"></i> Total Leçons</h5>
+                    <p class="display-6">{{ total_slots }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-mortarboard"></i> Classes</h5>
+                    <p class="display-6 text-primary">{{ class_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-book"></i> Matières</h5>
+                    <p class="display-6 text-info">{{ subject_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

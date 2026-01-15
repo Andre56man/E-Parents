@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Utilisateurs - E-Parent{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-0">
+                <i class="bi bi-people-fill"></i> Gestion des Utilisateurs
+            </h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'core:admin_user_create' %}" class="btn btn-primary">
+                <i class="bi bi-person-plus-fill"></i> Ajouter un Utilisateur
+            </a>
+        </div>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Chercher par nom ou email..." 
+                           value="{{ request.GET.search }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="role" class="form-control">
+                        <option value="">-- Tous les rôles --</option>
+                        <option value="ADMIN" {% if request.GET.role == 'ADMIN' %}selected{% endif %}>Administrateur</option>
+                        <option value="TEACHER" {% if request.GET.role == 'TEACHER' %}selected{% endif %}>Enseignant</option>
+                        <option value="PARENT" {% if request.GET.role == 'PARENT' %}selected{% endif %}>Parent</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-info w-100">
+                        <i class="bi bi-search"></i> Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau des utilisateurs -->
+    <div class="card shadow">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th><i class="bi bi-person"></i> Nom Complet</th>
+                        <th><i class="bi bi-envelope"></i> Email</th>
+                        <th><i class="bi bi-shield-fill"></i> Rôle</th>
+                        <th><i class="bi bi-telephone"></i> Téléphone</th>
+                        <th><i class="bi bi-toggle-on"></i> Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <strong>{{ user.get_full_name }}</strong>
+                            <br>
+                            <small class="text-muted">@{{ user.username }}</small>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.role == 'ADMIN' %}
+                                <span class="badge bg-danger"><i class="bi bi-shield-lock"></i> Admin</span>
+                            {% elif user.role == 'TEACHER' %}
+                                <span class="badge bg-info"><i class="bi bi-book"></i> Enseignant</span>
+                            {% else %}
+                                <span class="badge bg-success"><i class="bi bi-person-check"></i> Parent</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.phone_number|default:"--" }}</td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Actif</span>
+                            {% else %}
+                                <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> Inactif</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'core:admin_user_edit' user.id %}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil-fill"></i> Modifier
+                            </a>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal{{ user.id }}">
+                                <i class="bi bi-trash-fill"></i> Supprimer
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal de suppression -->
+                    <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Supprimer l'utilisateur</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Êtes-vous sûr de vouloir supprimer <strong>{{ user.get_full_name }}</strong> ?</p>
+                                    <p class="text-danger small"><i class="bi bi-info-circle"></i> Cette action est irréversible.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <a href="{% url 'core:admin_user_delete' user.id %}" class="btn btn-danger">
+                                        Supprimer définitivement
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox"></i> Aucun utilisateur trouvé
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people"></i> Total</h5>
+                    <p class="display-6">{{ total_users }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-shield-lock"></i> Admins</h5>
+                    <p class="display-6 text-danger">{{ admin_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-book"></i> Enseignants</h5>
+                    <p class="display-6 text-info">{{ teacher_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-person-check"></i> Parents</h5>
+                    <p class="display-6 text-success">{{ parent_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

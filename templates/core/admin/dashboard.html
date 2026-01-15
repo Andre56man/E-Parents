@@ -80,7 +80,7 @@
                     </div>
                 </div>
                 <div class="mt-3">
-                    <a href="/admin/accounts/user/?role__exact=TEACHER" class="text-white text-decoration-none" target="_blank">
+                    <a href="{% url 'core:admin_users_list' %}?role=TEACHER" class="text-white text-decoration-none">
                         <small>Voir tous <i class="bi bi-arrow-right"></i></small>
                     </a>
                 </div>
@@ -101,7 +101,7 @@
                     </div>
                 </div>
                 <div class="mt-3">
-                    <a href="/admin/accounts/user/?role__exact=PARENT" class="text-white text-decoration-none" target="_blank">
+                    <a href="{% url 'core:admin_users_list' %}?role=PARENT" class="text-white text-decoration-none">
                         <small>Voir tous <i class="bi bi-arrow-right"></i></small>
                     </a>
                 </div>
@@ -183,14 +183,8 @@
                                     <i class="bi bi-people"></i> Utilisateurs
                                 </h6>
                                 <div class="d-grid gap-2">
-                                    <a href="/admin/accounts/user/add/?role=PARENT" class="btn btn-outline-primary btn-sm" target="_blank">
-                                        <i class="bi bi-person-plus"></i> Ajouter un parent
-                                    </a>
-                                    <a href="/admin/accounts/user/add/?role=TEACHER" class="btn btn-outline-primary btn-sm" target="_blank">
-                                        <i class="bi bi-person-badge"></i> Ajouter un enseignant
-                                    </a>
-                                    <a href="/admin/accounts/user/add/?role=ADMIN" class="btn btn-outline-primary btn-sm" target="_blank">
-                                        <i class="bi bi-shield-check"></i> Ajouter un admin
+                                    <a href="{% url 'core:admin_user_create' %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-person-plus"></i> Ajouter un parent/enseignant
                                     </a>
                                 </div>
                             </div>

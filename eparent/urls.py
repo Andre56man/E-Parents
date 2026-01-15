@@ -25,6 +25,10 @@ urlpatterns = [
     # API Auth JWT pour lapp React Native
     path('api/auth/jwt/create/', TokenObtainPairView.as_view(), name='jwt_create'),
     path('api/auth/jwt/refresh/', TokenRefreshView.as_view(), name='jwt_refresh'),
+
+    # API Auth JWT pour lapp React Native
+    path('api/auth/', include('djoser.urls')),         # <--- AJOUTEZ CECI (pour /me/)
+    path('api/auth/', include('djoser.urls.jwt')),
 ]
 
 # Servir les fichiers médias en développement
