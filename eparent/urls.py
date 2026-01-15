@@ -22,9 +22,9 @@ urlpatterns = [
     path('api/notifications/', include('notifications.api_urls', namespace='notifications_api')),
     path('api/messaging/', include('messaging.api_urls', namespace='messaging_api')),
 
-    # API Auth JWT pour lapp React Native
-    path('api/auth/jwt/create/', TokenObtainPairView.as_view(), name='jwt_create'),
-    path('api/auth/jwt/refresh/', TokenRefreshView.as_view(), name='jwt_refresh'),
+    # # API Auth JWT pour lapp React Native
+    # path('api/auth/jwt/create/', TokenObtainPairView.as_view(), name='jwt_create'),
+    # path('api/auth/jwt/refresh/', TokenRefreshView.as_view(), name='jwt_refresh'),
 
     # API Auth JWT pour lapp React Native
     path('api/auth/', include('djoser.urls')),         # <--- AJOUTEZ CECI (pour /me/)

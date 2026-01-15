@@ -18,7 +18,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-produc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['ALLOWED_HOSTS', 'localhost','127.0.0.1','192.168.1.104']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.1.100', '10.113.227.105']
 
 
 # Application definition
@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'crispy_bootstrap5',
+    'corsheaders',
 
     # API REST
     'rest_framework',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -216,6 +218,7 @@ LOGGING = {
 }
 
 DJOSER = {
+    'LOGIN_FIELD': 'username',  # <--- AJOUTE CETTE LIGNE
     'SERIALIZERS': {
         'user': 'accounts.serializers.UserSerializer',
         'current_user': 'accounts.serializers.UserSerializer',
