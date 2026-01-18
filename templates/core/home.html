@@ -175,9 +175,7 @@
                     <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5 btn-hero">
                         <i class="bi bi-box-arrow-in-right"></i> Se Connecter
                     </a>
-                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg px-5 btn-hero">
-                        <i class="bi bi-person-plus"></i> S'inscrire
-                    </a>
+                   
                 {% endif %}
             </div>
         </div>
@@ -331,55 +329,7 @@
         </div>
     </div>
     
-    <!-- Notes récentes de la semaine -->
-    {% if recent_grades %}
-    <div class="row mt-4 mb-5">
-        <div class="col-12">
-            <div class="card shadow card-container border-0 rounded-4">
-                <div class="card-header bg-gradient bg-success text-white rounded-top-4">
-                    <h5 class="mb-0">
-                        <i class="bi bi-star-fill"></i> Notes Récentes
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th><i class="bi bi-person"></i> Élève</th>
-                                    <th><i class="bi bi-book"></i> Matière</th>
-                                    <th><i class="bi bi-star"></i> Note</th>
-                                    <th><i class="bi bi-tags"></i> Type</th>
-                                    <th><i class="bi bi-calendar3"></i> Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for grade in recent_grades %}
-                                <tr style="animation: slideInUp 0.6s ease-out;">
-                                    <td class="fw-500">{{ grade.student.first_name }} {{ grade.student.last_name }}</td>
-                                    <td><span class="badge bg-light text-dark">{{ grade.subject.name }}</span></td>
-                                    <td>
-                                        <span class="badge badge-animate bg-{% if grade.value >= 16 %}success{% elif grade.value >= 12 %}info{% elif grade.value >= 10 %}warning{% else %}danger{% endif %} fs-6 px-2 py-2">
-                                            <i class="bi bi-check-circle"></i> {{ grade.value }}/20
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ grade.get_grade_type_display }}</small>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted"><i class="bi bi-calendar3"></i> {{ grade.date|date:"d/m/Y" }}</small>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-</div>
+    
 
 <!-- Features Section -->
 <div class="container py-5 mb-5">
@@ -581,9 +531,7 @@
                 <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5 fw-bold">
                     <i class="bi bi-box-arrow-in-right"></i> Se Connecter
                 </a>
-                <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg px-5 fw-bold">
-                    <i class="bi bi-person-plus"></i> S'Inscrire
-                </a>
+               
             {% endif %}
         </div>
     </div>

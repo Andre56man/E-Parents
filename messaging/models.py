@@ -43,9 +43,11 @@ class Message(models.Model):
     )
     sender = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='sent_messages',
-        verbose_name='Expéditeur'
+        verbose_name='Expéditeur',
+        null=True,
+        blank=True
     )
     content = models.TextField(verbose_name='Contenu')
     is_read = models.BooleanField(default=False, verbose_name='Lu')
