@@ -8,4 +8,6 @@ urlpatterns = [
     path('conversations/create/', api_views.ConversationCreateView.as_view(), name='conversation_create'),
     path('conversations/<int:conversation_id>/messages/', api_views.ConversationMessagesView.as_view(), name='conversation_messages'),
     path('conversations/<int:conversation_id>/messages/create/', api_views.MessageCreateView.as_view(), name='message_create'),
+    path('contacts/', api_views.ParentContactsView.as_view(), name='contacts'),
+
 ]

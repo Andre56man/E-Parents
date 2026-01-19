@@ -5,10 +5,22 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from .models import Conversation, Message
 from core.models import Student
-from .api_serializers import ConversationSerializer, MessageSerializer
+from .api_serializers import ConversationSerializer, MessageSerializer, UserMiniSerializer
 
 User = get_user_model()
 
+
+class ParentContactsView(generics.ListAPIView):
+    """
+    Renvoie tous les profs et admins pour qu’un parent puisse démarrer une conversation
+    """
+    serializer_class = UserMiniSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Tous les profs + administration
+        return User.objects.filter(role__in=['TEACHER', 'ADMIN'])
+    
 
 class ConversationListView(generics.ListAPIView):
     serializer_class = ConversationSerializer
