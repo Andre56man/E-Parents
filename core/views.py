@@ -370,17 +370,72 @@ def add_grade_view(request):
     Vue pour ajouter une note (enseignants)
     """
     if request.method == 'POST':
-        # Traitement du formulaire (à implémenter avec un formulaire)
-        messages.success(request, 'Note ajoutée avec succès!')
-        return redirect('core:dashboard')
+        try:
+            # Récupération des données du formulaire
+            student_id = request.POST.get('student')
+            subject_id = request.POST.get('subject')
+            value = request.POST.get('value')
+            coefficient = request.POST.get('coefficient', '1.0')
+            grade_type = request.POST.get('grade_type', 'DEVOIR')
+            date = request.POST.get('date')
+            comment = request.POST.get('comment', '')
+            
+            # Validation des champs requis
+            if not all([student_id, subject_id, value, date]):
+                messages.error(request, 'Veuillez remplir tous les champs obligatoires.')
+                return redirect('core:add_grade')
+            
+            # Récupération de l'étudiant par ID
+            try:
+                student = Student.objects.get(id=int(student_id))
+            except (Student.DoesNotExist, ValueError):
+                messages.error(request, f'Élève non trouvé avec l\'ID: {student_id}')
+                return redirect('core:add_grade')
+            
+            # Récupération de la matière
+            try:
+                subject = Subject.objects.get(id=int(subject_id))
+            except Subject.DoesNotExist:
+                messages.error(request, 'Matière non trouvée.')
+                return redirect('core:add_grade')
+            
+            # Conversion de la date string en objet date
+            try:
+                date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                messages.error(request, 'Format de date invalide.')
+                return redirect('core:add_grade')
+            
+            # Création de la note
+            grade = Grade.objects.create(
+                student=student,
+                subject=subject,
+                teacher=request.user,
+                value=float(value),
+                coefficient=float(coefficient),
+                grade_type=grade_type,
+                date=date_obj,
+                comment=comment if comment else None
+            )
+            
+            messages.success(request, f'Note de {value}/20 ajoutée avec succès pour {student.get_full_name()}!')
+            return redirect('core:dashboard')
+        except ValueError as e:
+            messages.error(request, f'Erreur dans les données saisies: {str(e)}')
+        except Exception as e:
+            messages.error(request, f'Une erreur est survenue: {str(e)}')
     
     user = request.user
     classes = Class.objects.filter(teacher=user)
     subjects = Subject.objects.filter(class_subjects__teacher=user).distinct()
     
+    # Récupérer tous les élèves des classes du professeur
+    students = Student.objects.filter(current_class__in=classes).select_related('current_class').order_by('last_name', 'first_name')
+    
     context = {
         'classes': classes,
         'subjects': subjects,
+        'students': students,
     }
     
     return render(request, 'core/teacher/add_grade.html', context)
@@ -393,15 +448,66 @@ def add_attendance_view(request):
     Vue pour ajouter une absence/retard (enseignants)
     """
     if request.method == 'POST':
-        # Traitement du formulaire (à implémenter avec un formulaire)
-        messages.success(request, 'Absence/retard enregistré avec succès!')
-        return redirect('core:dashboard')
+        try:
+            # Récupération des données du formulaire
+            student_id = request.POST.get('student')
+            class_id = request.POST.get('class')
+            status = request.POST.get('status')
+            date = request.POST.get('date')
+            reason = request.POST.get('reason', '')
+            
+            # Validation des champs requis
+            if not all([student_id, class_id, status, date]):
+                messages.error(request, 'Veuillez remplir tous les champs obligatoires.')
+                return redirect('core:add_attendance')
+            
+            # Récupération de l'étudiant par ID
+            try:
+                student = Student.objects.get(id=int(student_id))
+            except (Student.DoesNotExist, ValueError):
+                messages.error(request, f'Élève non trouvé avec l\'ID: {student_id}')
+                return redirect('core:add_attendance')
+            
+            # Récupération de la classe
+            try:
+                class_obj = Class.objects.get(id=int(class_id))
+            except Class.DoesNotExist:
+                messages.error(request, 'Classe non trouvée.')
+                return redirect('core:add_attendance')
+            
+            # Conversion de la date string en objet date
+            try:
+                date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                messages.error(request, 'Format de date invalide.')
+                return redirect('core:add_attendance')
+            
+            # Création de l'absence/retard
+            attendance = Attendance.objects.create(
+                student=student,
+                class_obj=class_obj,
+                status=status,
+                date=date_obj,
+                reason=reason if reason else None,
+                created_by=request.user
+            )
+            
+            messages.success(request, f'{status} enregistré avec succès pour {student.get_full_name()}!')
+            return redirect('core:dashboard')
+        except ValueError as e:
+            messages.error(request, f'Erreur dans les données saisies: {str(e)}')
+        except Exception as e:
+            messages.error(request, f'Une erreur est survenue: {str(e)}')
     
     user = request.user
     classes = Class.objects.filter(teacher=user)
     
+    # Récupérer tous les élèves des classes du professeur
+    students = Student.objects.filter(current_class__in=classes).select_related('current_class').order_by('last_name', 'first_name')
+    
     context = {
         'classes': classes,
+        'students': students,
     }
     
     return render(request, 'core/teacher/add_attendance.html', context)

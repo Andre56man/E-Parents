@@ -46,17 +46,18 @@ def conversation_detail_view(request, conversation_id):
                 sender__in=conversation.participants.exclude(id=user.id)
             ).update(is_read=True)
             
-            messages.success(request, 'Message envoyé avec succès!')
+            django_messages.success(request, 'Message envoyé avec succès!')
             return redirect('messaging:conversation_detail', conversation_id=conversation_id)
         else:
-            messages.error(request, 'Le message ne peut pas être vide.')
+            django_messages.error(request, 'Le message ne peut pas être vide.')
     
     message_list = conversation.messages.all().order_by('created_at')
     
-    # Marquer les messages comme lus
+    # Marquer les messages reçus comme lus quand on ouvre la conversation
     Message.objects.filter(
         conversation=conversation,
-        sender__in=conversation.participants.exclude(id=user.id)
+        sender__in=conversation.participants.exclude(id=user.id),
+        is_read=False
     ).update(is_read=True)
     
     context = {
@@ -65,6 +66,26 @@ def conversation_detail_view(request, conversation_id):
     }
     
     return render(request, 'messaging/conversation_detail.html', context)
+
+
+@login_required
+def mark_message_read_view(request, message_id):
+    """
+    Vue pour marquer un message comme lu
+    """
+    user = request.user
+    message = get_object_or_404(Message, id=message_id)
+    
+    # Vérifier que l'utilisateur est participant de la conversation
+    if user not in message.conversation.participants.all():
+        django_messages.error(request, 'Vous n\'avez pas accès à ce message.')
+        return redirect('messaging:conversation_list')
+    
+    # Marquer le message comme lu
+    message.is_read = True
+    message.save()
+    
+    return redirect('messaging:conversation_detail', conversation_id=message.conversation.id)
 
 
 @login_required
@@ -92,10 +113,10 @@ def create_conversation_view(request):
                     # ID élève invalide : on ignore simplement le lien élève
                     pass
             
-            messages.success(request, 'Conversation créée avec succès!')
+            django_messages.success(request, 'Conversation créée avec succès!')
             return redirect('messaging:conversation_detail', conversation_id=conversation.id)
         else:
-            messages.error(request, 'Veuillez remplir tous les champs requis.')
+            django_messages.error(request, 'Veuillez remplir tous les champs requis.')
     
     # Liste des utilisateurs avec qui on peut converser
     if request.user.is_parent():

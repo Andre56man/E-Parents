@@ -29,8 +29,13 @@
     </div>
 
     <div class="mb-3">
-        <label for="id_student" class="form-label">ID élève</label>
-        <input type="text" name="student" id="id_student" class="form-control" placeholder="ID de l'élève">
+        <label for="id_student" class="form-label">Élève</label>
+        <select name="student" id="id_student" class="form-select" required>
+            <option value="" selected disabled>-- Sélectionner un élève --</option>
+            {% for student in students %}
+            <option value="{{ student.id }}" data-class="{{ student.current_class.id }}">{{ student.get_full_name }} ({{ student.student_number }}) - {{ student.current_class.name }}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <div class="mb-3">
@@ -68,4 +73,31 @@
         <i class="bi bi-check-circle"></i> Enregistrer la note
     </button>
 </form>
+
+<script>
+// Filtrer les élèves selon la classe sélectionnée
+document.getElementById('id_class').addEventListener('change', function() {
+    const selectedClassId = this.value;
+    const studentSelect = document.getElementById('id_student');
+    const allOptions = studentSelect.querySelectorAll('option');
+    
+    // Réinitialiser la sélection
+    studentSelect.value = '';
+    
+    // Afficher/masquer les options selon la classe
+    allOptions.forEach(option => {
+        if (option.value === '') {
+            // Garder l'option par défaut visible
+            option.style.display = '';
+        } else {
+            const studentClassId = option.getAttribute('data-class');
+            if (selectedClassId && studentClassId !== selectedClassId) {
+                option.style.display = 'none';
+            } else {
+                option.style.display = '';
+            }
+        }
+    });
+});
+</script>
 {% endblock %}
